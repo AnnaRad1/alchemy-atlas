@@ -533,3 +533,40 @@ html,body,#app{height:100%!important;max-height:100%!important;overflow:hidden!i
 @media(max-height:730px){
  .alchemy-map-card{width:clamp(56px,17vw,88px)!important}
 }
+
+
+/* Keep action bars fully above mobile browser chrome. */
+.map-footer{
+ box-sizing:border-box!important;
+ height:clamp(66px,9%,92px)!important;
+ min-height:0!important;
+ bottom:8px!important;
+ padding:5px 12px!important;
+ align-items:center!important;
+}
+.map-footer button{box-sizing:border-box!important;height:clamp(42px,6vh,60px)!important;min-height:0!important}
+.level-screen{box-sizing:border-box!important}
+.level-controls{
+ box-sizing:border-box!important;
+ height:clamp(205px,29%,285px)!important;
+ flex:0 0 clamp(205px,29%,285px)!important;
+ display:grid!important;
+ grid-template-rows:clamp(42px,5.3vh,53px) auto minmax(0,1fr) clamp(42px,5.4vh,52px)!important;
+ gap:2px!important;
+ padding:2px 8px 9px!important;
+ overflow:hidden!important;
+}
+.level-hint-wrap{min-height:0!important;height:100%!important;flex:none!important}
+.level-inventory-title{min-height:0!important;margin:0!important;line-height:1.15!important}
+.level-hand{min-height:0!important;height:100%!important;overflow:hidden!important}
+.level-ingredient{height:100%!important;width:auto!important;max-width:28%!important;aspect-ratio:143/180!important}
+.level-buttons{min-height:0!important;height:100%!important;flex:none!important}
+.level-buttons button{height:100%!important;min-height:0!important}
+.level-map-wrap{min-height:0!important}
+@media(max-height:680px){
+ .level-controls{
+  height:clamp(185px,32%,230px)!important;
+  flex-basis:clamp(185px,32%,230px)!important;
+  grid-template-rows:39px auto minmax(0,1fr) 39px!important;
+ }
+}
