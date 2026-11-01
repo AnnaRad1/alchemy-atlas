@@ -421,3 +421,18 @@ body{
 .art-stage{height:100%!important;max-height:100%!important}
 .level-viewport{overscroll-behavior:contain;touch-action:none}
 .level-map-wrap,.level-controls{min-height:0}
+
+
+/* Show the complete illustrations instead of cutting their edges with cover.
+   A soft background fill avoids empty bands on tall or wide phones. */
+.art-stage{background:#111a38!important}
+.art-stage .art-image{
+ object-fit:contain!important;
+ object-position:center center!important;
+ width:100%!important;height:100%!important;
+}
+.level-screen{
+ background:
+ linear-gradient(180deg,rgba(13,15,52,.10),rgba(30,19,74,.18)),
+ url('/alchemy-atlas/assets/backgrounds/alchemy_forest.png') center/100% 100% no-repeat!important;
+}
