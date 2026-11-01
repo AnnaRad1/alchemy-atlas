@@ -96,7 +96,7 @@ const app=document.querySelector<HTMLDivElement>('#app')!;
 let game:Phaser.Game|null=null;
 function showHome(){
  app.innerHTML=`<div class="art-screen"><div class="art-stage">
- <img class="art-image" src="./assets/home-art.webp" alt="Волшебная лесная дорога">
+ <img class="art-image" src="./assets/backgrounds/forest-map.webp" alt="Волшебная лесная дорога">
  <div class="art-fallback"><h1>⚗️ Алхимический атлас</h1><p>Путь алхимика</p></div>
  <div class="level-viewport" id="level-viewport" aria-label="Прокрутка уровней"><div id="moving-levels"></div></div>
  <div class="map-topbar"><span>⚗️ Алхимик</span><span>🧪 ${saved.flasks}</span></div>
