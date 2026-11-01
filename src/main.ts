@@ -105,4 +105,57 @@ function showGame(){
  document.querySelector<HTMLButtonElement>('#back')!.onclick=showHome;
  document.querySelector<HTMLButtonElement>('#next')!.onclick=nextTurn;
  document.querySelector<HTMLButtonElement>('#restart')!.onclick=start;
- if(!game)game=showHome();
+ if(!game)game=new Phaser.Game({type:Phaser.AUTO,parent:'board',width:640,height:430,backgroundColor:'#ead8b5',scene:[AtlasScene],scale:{mode:Phaser.Scale.FIT,autoCenter:Phaser.Scale.CENTER_BOTH}});
+ else {document.querySelector('#board')!.appendChild(game.canvas);game.scale.refresh();mapScene?.drawMap();}
+}
+function render(){
+ const me=players[0];if(!me)return;
+ document.querySelector('#stats')!.innerHTML=`<span class="pill">🧪 Всего накоплено: <b>${saved.flasks}</b></span><span class="pill">Ход: ${turn}</span><span class="pill">Превращений: ${actions}</span><span class="pill">Коллекция: ${saved.discoveries.length}/6</span>`;
+ document.querySelector('#players')!.innerHTML=players.map(p=>`<span class="pill">${p.name}: ${p.flasks} 🧪</span>`).join('');
+ document.querySelector('#hint')!.textContent=ended?'Партия завершена. Нажмите «Новая партия», чтобы заработать ещё колбочки.': 'Собирайте ингредиенты, создавайте промежуточные вещества и первыми открывайте тайны. Все рецепты показаны на карте.';
+ const recipeEl=document.querySelector('#recipes')!;recipeEl.innerHTML='';
+ RECIPES.forEach(r=>{
+  const btn=document.createElement('button');btn.className='element '+(r.reward?'secret ':'')+(can(me,r)&&actions>0?'ready':'');
+  btn.textContent=`${r.reward?'❓ ':EMOJI[r.name]||'⚗️ '}${r.name} ${r.reward?'('+r.reward+' 🧪)':''}`;
+  btn.title=r.inputs.join(' + ')+' → '+r.name;
+  btn.disabled=ended||actions===0||!!claimed[r.name]||!can(me,r);
+  btn.onclick=()=>{if(craft(me,r)){actions--;render();}};
+  recipeEl.appendChild(btn);
+ });
+ document.querySelector('#hand')!.innerHTML=Object.entries(me.hand).filter(([,n])=>n>0).map(([k,n])=>'<span class="ingredient-tile"><span class="ingredient-icon">'+(EMOJI[k]||'⚗️')+'</span><span>'+k+'</span><b>×'+n+'</b></span>').join('')||'Нет ингредиентов';
+ document.querySelector<HTMLButtonElement>('#next')!.disabled=ended;
+ document.querySelector('#log')!.innerHTML=messages.map(m=>`<div>• ${m}</div>`).join('');
+ mapScene?.drawMap();
+}
+class AtlasScene extends Phaser.Scene{
+ constructor(){super('Atlas');}
+ create(){mapScene=this;this.drawMap();}
+ drawMap(){
+  const w=this.scale.width,h=this.scale.height;
+  this.children.removeAll();
+  const g=this.add.graphics();
+  const positions:Record<string,[number,number]>={
+   'Вода':[45,50],'Солнце':[145,50],'Трава':[245,50],'Огонь':[345,50],'Воздух':[445,50],'Земля':[545,50],
+   'Роса':[95,155],'Пар':[215,155],'Росток':[335,155],'Искра':[455,155],
+   'Туман':[215,260],'Жизнь':[395,260],
+   'Лунная капля':[110,355],'Живой кристалл':[325,355],'Золотой эликсир':[535,355]
+  };
+  const scale=Math.min((w-20)/600,(h-20)/405), ox=(w-600*scale)/2,oy=(h-405*scale)/2;
+  const pt=(n:string)=>{const p=positions[n];return [ox+p[0]*scale,oy+p[1]*scale] as const;};
+  g.lineStyle(1.6,0x9b774b,.8);
+  for(const r of RECIPES){const [x2,y2]=pt(r.name);for(const i of r.inputs){const [x1,y1]=pt(i);g.lineBetween(x1,y1,x2,y2);}}
+  for(const [name] of Object.entries(positions)){
+   const [x,y]=pt(name),secret=RECIPES.find(r=>r.name===name)?.reward;
+   const owner=claimed[name];
+   const recipe=RECIPES.find(r=>r.name===name);
+   const ready=!!recipe&&players.length>0&&actions>0&&!ended&&can(players[0],recipe);
+   const side=Math.max(23,43*scale),radius=Math.max(5,8*scale);
+   if(ready){g.fillStyle(0xf5c950,.5);g.fillRoundedRect(x-side/2-5,y-side/2-5,side+10,side+10,radius+3);}
+   g.fillStyle(owner?0xb5c49b:ready?0xffdf88:secret?0xb38a4c:0xf7e7c5,1);g.lineStyle(ready?3:2,ready?0xd89b22:0x75512c,1);
+   g.fillRoundedRect(x-side/2,y-side/2,side,side,radius);g.strokeRoundedRect(x-side/2,y-side/2,side,side,radius);
+   this.add.text(x,y-2,secret?(owner?'✓':'?'):(EMOJI[name]||'✦'),{fontSize:`${Math.max(14,21*scale)}px`,color:'#4c311d'}).setOrigin(.5);
+   this.add.text(x,y+Math.max(16,24*scale),name,{fontSize:`${Math.max(9,12*scale)}px`,color:'#533b25',backgroundColor:'#ead8b5'}).setOrigin(.5);
+  }
+ }
+}
+showHome();
