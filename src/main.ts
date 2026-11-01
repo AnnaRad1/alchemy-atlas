@@ -173,7 +173,7 @@ function showGame(){
  app.innerHTML=`<div class="level-screen">
   <header class="level-head"><button id="back" aria-label="К уровням">←</button><strong>Уровень 1 · Первая капля</strong><span id="turn-count"></span></header>
   <section id="players" class="level-rivals"></section>
-  <section class="level-map-wrap"><div class="level-map-title">Создай Лунную каплю</div><div id="board" class="level-board"></div></section>
+  <section class="level-map-wrap"><div id="board" class="level-board"></div></section>
   <section class="level-controls">
    <div class="level-inventory-title">Твои ингредиенты <span id="action-count"></span></div>
    <div id="hand" class="level-hand"></div>
