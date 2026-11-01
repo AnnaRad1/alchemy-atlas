@@ -48,7 +48,7 @@ function craft(p:Player,r:Recipe):boolean {
 function start(){
  players=[{name:'Вы',hand:{},flasks:0,bot:false},{name:'Алхимик Лис',hand:{},flasks:0,bot:true},{name:'Мастер Сова',hand:{},flasks:0,bot:true}];
  claimed={};turn=1;actions=1;ended=false;messages=[];
- players.forEach(p=>draw(p,3));players[0].hand={'Вода':2,'Солнце':1,'Огонь':1};selectedRecipe='Роса';
+ players.forEach(p=>draw(p,3));players[0].hand={'Вода':2,'Солнце':1,'Огонь':1};players[1].hand={'Вода':2,'Огонь':2};players[2].hand={'Вода':2,'Солнце':2};selectedRecipe='Роса';
  note('Новая партия. Создавайте вещества и опередите соперников!');
  render();
 }
@@ -86,17 +86,18 @@ async function nextTurn(){
  if(ended)return;
  for(let i=1;i<3;i++){
   const bot=players[i];
-  const recipe=RECIPES.find(r=>!r.reward&&can(bot,r));
+  const preferred=i===2?'Роса':'Пар';
+  const recipe=RECIPES.find(r=>r.name===preferred&&can(bot,r));
   const card=document.querySelectorAll<HTMLElement>('.level-rival')[i];
   if(card){
    card.classList.add('rival-taking-turn');
    const label=document.createElement('span');
    label.className='rival-action-label';
-   label.textContent=recipe?'✦ '+recipe.name:'✦ Собирает';
+   label.textContent=recipe?'✦ Создал '+recipe.name:'✦ Собирает ингредиенты';
    card.append(label);
   }
   if(recipe)craft(bot,recipe);else draw(bot,1);
-  await new Promise<void>(resolve=>setTimeout(resolve,500));
+  await new Promise<void>(resolve=>setTimeout(resolve,1800));
   if(!document.querySelector('.level-screen'))return;
   card?.classList.remove('rival-taking-turn');
   card?.querySelector('.rival-action-label')?.remove();
