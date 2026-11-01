@@ -10,7 +10,7 @@ const BASE:Ingredient[]=['Вода','Солнце','Огонь'];
 const RECIPES:Recipe[]=[
 {name:'Роса',inputs:['Вода','Солнце']},
 {name:'Пар',inputs:['Вода','Огонь']},
-{name:'Лунная капля',inputs:['Роса','Пар'],reward:1}
+{name:'Лунная капля',inputs:['Роса','Вода'],reward:1}
 ];
 const EMOJI:Record<string,string>={'Вода':'💧','Солнце':'☀️','Трава':'🌿','Огонь':'🔥','Воздух':'🌬️','Земля':'🪨','Роса':'💠','Пар':'♨️','Росток':'🌱','Искра':'✨','Туман':'🌫️','Жизнь':'🍃'};
 const SAVE_KEY='alchemy-atlas-v1';
@@ -19,7 +19,7 @@ let saved=load();
 let players:Player[]=[];
 let claimed:Record<string,string>={};
 let turn=1;
-let actions=2;
+let actions=1;
 let ended=false;
 let messages:string[]=[];
 let mapScene:AtlasScene|null=null;
@@ -45,7 +45,7 @@ function craft(p:Player,r:Recipe):boolean {
 }
 function start(){
  players=[{name:'Вы',hand:{},flasks:0,bot:false},{name:'Алхимик Лис',hand:{},flasks:0,bot:true},{name:'Мастер Сова',hand:{},flasks:0,bot:true}];
- claimed={};turn=1;actions=2;ended=false;messages=[];
+ claimed={};turn=1;actions=1;ended=false;messages=[];
  players.forEach(p=>draw(p,3));players[0].hand={'Вода':2,'Солнце':1,'Огонь':1};selectedRecipe='Роса';
  note('Новая партия. Создавайте вещества и опередите соперников!');
  render();
@@ -82,7 +82,7 @@ function chooseBotRecipe(p:Player):Recipe|undefined{
 }
 function nextTurn(){
  if(ended)return;
- turn++;actions=2;
+ turn++;actions=1;
  draw(players[0],2);
  note('Ход '+turn+': получены новые ингредиенты.');
  render();
