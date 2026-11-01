@@ -2,16 +2,18 @@ import Phaser from 'phaser';
 import './style.css';
 
 type Ingredient = 'Вода'|'Солнце'|'Трава'|'Огонь'|'Воздух'|'Земля'|'Роса'|'Пар'|'Росток'|'Искра'|'Туман'|'Жизнь';
-type Secret = 'Лунная капля'|'Живой кристалл'|'Золотой эликсир';
+type Secret = 'Туман'|'Лунная капля'|'Живой кристалл'|'Золотой эликсир';
 type Recipe = {name:Ingredient|Secret; inputs:Ingredient[]; reward?:number};
 type Player = {name:string; hand:Record<string,number>; flasks:number; bot:boolean};
 type Save = {flasks:number; discoveries:string[]};
 const BASE:Ingredient[]=['Вода','Солнце','Огонь'];
-const RECIPES:Recipe[]=[
+const LEVEL_RECIPES:Record<number,Recipe[]>={1:[
 {name:'Роса',inputs:['Вода','Солнце']},
 {name:'Пар',inputs:['Вода','Огонь']},
 {name:'Лунная капля',inputs:['Роса','Вода'],reward:1}
-];
+],2:[{name:'Роса',inputs:['Вода','Солнце']},{name:'Пар',inputs:['Вода','Огонь']},{name:'Туман',inputs:['Роса','Пар'],reward:1}]};
+let currentLevel=1;
+const RECIPES=()=>LEVEL_RECIPES[currentLevel];
 const ELEMENT_FILES:Record<string,string>={'Вода':'water','Солнце':'sun','Огонь':'fire','Роса':'dew','Пар':'steam','Лунная капля':'moon_drop'};
 const elementImage=(name:string)=>ELEMENT_FILES[name]?'./assets/elements/'+ELEMENT_FILES[name]+'.png':'';
 const EMOJI:Record<string,string>={'Вода':'💧','Солнце':'☀️','Трава':'🌿','Огонь':'🔥','Воздух':'🌬️','Земля':'🪨','Роса':'💠','Пар':'♨️','Росток':'🌱','Искра':'✨','Туман':'🌫️','Жизнь':'🍃'};
@@ -52,12 +54,12 @@ function start(){
  note('Новая партия. Создавайте вещества и опередите соперников!');
  render();
 }
-function targets():Recipe[]{return RECIPES.filter(r=>r.reward&&!claimed[r.name]);}
+function targets():Recipe[]{return RECIPES().filter(r=>r.reward&&!claimed[r.name]);}
 function ingredientCost(p:Player,name:string,seen=new Set<string>()):number{
  if(count(p,name)>0)return 0;
  if(seen.has(name))return 99;
  if(BASE.includes(name as Ingredient))return 3;
- const r=RECIPES.find(x=>x.name===name);
+ const r=RECIPES().find(x=>x.name===name);
  if(!r)return 99;
  const next=new Set(seen);next.add(name);
  return 1+r.inputs.reduce((sum,k)=>sum+ingredientCost(p,k,next),0);
@@ -70,24 +72,24 @@ function chooseBotRecipe(p:Player):Recipe|undefined{
  const bc=b.inputs.reduce((s,k)=>s+ingredientCost(p,k),0);
  return p.name==='Мастер Сова'?(bc/(b.reward||1)-ac/(a.reward||1)):(ac-bc);
  })[0];
- const direct=RECIPES.find(r=>r.name===goal.name&&can(p,r));if(direct)return direct;
+ const direct=RECIPES().find(r=>r.name===goal.name&&can(p,r));if(direct)return direct;
  function needed(name:string,seen=new Set<string>()):Recipe|undefined{
   if(count(p,name)>0||seen.has(name))return;
-  const r=RECIPES.find(x=>x.name===name);
+  const r=RECIPES().find(x=>x.name===name);
   if(!r)return;
   if(can(p,r))return r;
   const next=new Set(seen);next.add(name);
   for(const k of r.inputs){const sub=needed(k,next);if(sub)return sub;}
  }
  for(const k of goal.inputs){const r=needed(k);if(r)return r;}
- return RECIPES.find(r=>can(p,r)&&!r.reward);
+ return RECIPES().find(r=>can(p,r)&&!r.reward);
 }
 async function nextTurn(){
  if(ended)return;
  for(let i=1;i<3;i++){
   const bot=players[i];
   const preferred='Роса';
-  const recipe=RECIPES.find(r=>r.name===preferred&&can(bot,r));
+  const recipe=RECIPES().find(r=>r.name===preferred&&can(bot,r));
   const card=document.querySelectorAll<HTMLElement>('.level-rival')[i];
   if(card){
    card.classList.add('rival-taking-turn');
@@ -252,7 +254,7 @@ function showGame(){
  document.querySelector<HTMLButtonElement>('#restart')!.onclick=start;
  document.querySelector<HTMLButtonElement>('#result-back')!.onclick=showHome;
  document.querySelector<HTMLButtonElement>('#make-selected')!.onclick=async()=>{
-  const r=RECIPES.find(x=>x.name===selectedRecipe);
+  const r=RECIPES().find(x=>x.name===selectedRecipe);
   if(craftingAnimation||!r||actions<=0||ended||!can(players[0],r))return;
   craftingAnimation=true;
   const button=document.querySelector<HTMLButtonElement>('#make-selected')!;
@@ -285,7 +287,7 @@ function render(){
  document.querySelector('#players')!.innerHTML=players.map((p,i)=>`<div class="level-rival ${i===0?'is-me':''}"><div class="rival-top"><div class="rival-face">${i===0?'🧙‍♀️':i===1?'🦊':'🦉'}</div><b class="rival-flasks"><span>🧪</span><span>${p.flasks}</span></b></div><span class="rival-name">${p.name}</span></div>`).join('');
 
  document.querySelector('#hand')!.innerHTML=Object.entries(me.hand).filter(([,n])=>n>0).map(([k,n])=>`<div class="level-ingredient"><img src="${elementImage(k)}" alt="${k}"><b>×${n}</b></div>`).join('')||'<span>Ингредиенты закончились</span>';
- const r=RECIPES.find(x=>x.name===selectedRecipe)||RECIPES[0];
+ const r=RECIPES().find(x=>x.name===selectedRecipe)||RECIPES()[0];
  const missing=r.inputs.filter(k=>count(me,k)<r.inputs.filter(x=>x===k).length);
  document.querySelector('#hint')!.innerHTML=`<b>${r.name}</b><span>${r.inputs.map(k=>(EMOJI[k]||'✦')+' '+k).join(' + ')}</span><small>${claimed[r.name]?'Тайна уже открыта':missing.length?'Не хватает: '+[...new Set(missing)].join(', '):'✓ Можно создать'}</small>`;
  const make=document.querySelector<HTMLButtonElement>('#make-selected')!;
@@ -303,7 +305,7 @@ function drawLevelMap(){
  const lines='<svg class="alchemy-connections" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs><filter id="alchemy-glow"><feGaussianBlur stdDeviation="1.2"/></filter></defs><path d="M28 16 Q28 31 50 49 M72 16 Q72 31 50 49 M50 49 L50 83" fill="none" stroke="#ffc36c" stroke-width="1.8" filter="url(#alchemy-glow)"/><path d="M28 16 Q28 31 50 49 M72 16 Q72 31 50 49 M50 49 L50 83" fill="none" stroke="#ffe8a5" stroke-width=".65"/></svg>';
  board.innerHTML=lines+names.map(name=>{
   const [x,y]=positions[name];
-  const recipe=RECIPES.find(r=>r.name===name);
+  const recipe=RECIPES().find(r=>r.name===name);
   const ready=!!recipe&&players.length>0&&actions>0&&!ended&&can(players[0],recipe);
   const chosen=selectedRecipe===name;
   const owned=players.length>0&&count(players[0],name)>0;
@@ -311,7 +313,7 @@ function drawLevelMap(){
   return `<button type="button" class="alchemy-map-card ${owned?'owned':ready?'ready':''} ${chosen?'chosen':''} ${locked?'secret':''}" data-element="${name}" style="left:${x}%;top:${y}%" aria-label="${name}"><img src="${elementImage(name)}" alt="${name}"></button>`;
  }).join('');
  board.querySelectorAll<HTMLButtonElement>('[data-element]').forEach(button=>{
-  button.onclick=()=>{const name=button.dataset.element!;if(RECIPES.some(r=>r.name===name)){selectedRecipe=name;render();}};
+  button.onclick=()=>{const name=button.dataset.element!;if(RECIPES().some(r=>r.name===name)){selectedRecipe=name;render();}};
  });
 }
 class AtlasScene extends Phaser.Scene{
@@ -329,11 +331,11 @@ class AtlasScene extends Phaser.Scene{
   const scale=Math.min((w-20)/600,(h-20)/405), ox=(w-600*scale)/2,oy=(h-405*scale)/2;
   const pt=(n:string)=>{const p=positions[n];return [ox+p[0]*scale,oy+p[1]*scale] as const;};
   g.lineStyle(1.6,0x9b774b,.8);
-  for(const r of RECIPES){const [x2,y2]=pt(r.name);for(const i of r.inputs){const [x1,y1]=pt(i);g.lineBetween(x1,y1,x2,y2);}}
+  for(const r of RECIPES()){const [x2,y2]=pt(r.name);for(const i of r.inputs){const [x1,y1]=pt(i);g.lineBetween(x1,y1,x2,y2);}}
   for(const [name] of Object.entries(positions)){
-   const [x,y]=pt(name),secret=RECIPES.find(r=>r.name===name)?.reward;
+   const [x,y]=pt(name),secret=RECIPES().find(r=>r.name===name)?.reward;
    const owner=claimed[name];
-   const recipe=RECIPES.find(r=>r.name===name);
+   const recipe=RECIPES().find(r=>r.name===name);
    const ready=!!recipe&&players.length>0&&actions>0&&!ended&&can(players[0],recipe);
    const side=Math.max(80,132*scale);
    if(ready){g.fillStyle(0xffd46c,.22);g.fillRoundedRect(x-side/2-5,y-side/2-5,side+10,side+10,17*scale);}
