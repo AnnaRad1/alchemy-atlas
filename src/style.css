@@ -202,3 +202,19 @@ html,body{width:100%;height:100%;margin:0;padding:0;overflow:hidden;background:#
 .level-board{background:transparent!important;border:0!important;box-shadow:none!important}
 .level-board canvas{background:transparent!important}
 .art-screen{position:fixed;inset:0}
+
+
+/* Atmospheric full-screen gradient for the introductory level. */
+.level-screen{
+ background:
+ radial-gradient(ellipse 75% 46% at 50% 38%,rgba(169,147,235,.44) 0%,transparent 78%),
+ radial-gradient(ellipse 80% 38% at 8% 12%,rgba(89,180,226,.32) 0%,transparent 82%),
+ radial-gradient(ellipse 68% 36% at 96% 80%,rgba(148,91,196,.34) 0%,transparent 85%),
+ linear-gradient(165deg,#233f77 0%,#425fa0 25%,#5b529c 53%,#383b77 76%,#1c2b57 100%)!important;
+}
+.level-map-wrap,.level-board{background:transparent!important}
+.level-map-title{font-size:clamp(15px,4vw,20px);font-weight:bold;color:#fff0d1}
+.level-recipe-hint{background:rgba(32,40,86,.36);border:1px solid rgba(218,188,250,.2)}
+.level-rival{background:rgba(29,43,97,.34)}
+.level-rival.is-me{background:rgba(65,61,129,.46)}
+.level-controls{background:linear-gradient(180deg,transparent,rgba(19,27,65,.25))}
