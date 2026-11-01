@@ -1009,3 +1009,13 @@ html,body,#app{height:100%!important;max-height:100%!important;overflow:hidden!i
  border-radius:0!important;
  background-color:transparent!important;
 }
+
+
+/* Lightweight crafting animation; no resizing or distortion of artwork. */
+.craft-animation-layer{position:fixed;inset:0;pointer-events:none;z-index:12;overflow:hidden}
+.craft-flying-spark{position:absolute;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle,#fff 0%,#f4a8ff 28%,#a64cff 55%,transparent 75%);box-shadow:0 0 12px 5px #b653f5aa;will-change:transform,opacity}
+.craft-target-flash{position:absolute;width:110px;height:110px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,#fff9 0%,#ce81ff88 24%,#8f30f955 48%,transparent 72%);animation:craft-burst .39s ease-out both}
+@keyframes craft-burst{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}35%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(1.35)}}
+.craft-ingredient-active{filter:drop-shadow(0 0 9px #d277ff)!important}
+.alchemy-map-card.craft-target-active{filter:drop-shadow(0 0 10px #eeb7ff) drop-shadow(0 0 24px #b34bff)!important}
+@media(prefers-reduced-motion:reduce){.craft-target-flash{animation-duration:.08s}}
