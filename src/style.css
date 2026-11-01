@@ -436,3 +436,44 @@ body{
  linear-gradient(180deg,rgba(13,15,52,.10),rgba(30,19,74,.18)),
  url('/alchemy-atlas/assets/backgrounds/alchemy_forest.png') center/100% 100% no-repeat!important;
 }
+
+
+/* Restore the original attractive image proportions and fit the browser's
+   actual visible area, not the taller layout viewport. */
+:root{--visible-height:100dvh}
+html,body,#app,.art-screen,.level-screen{
+ height:var(--visible-height)!important;
+ max-height:var(--visible-height)!important;
+ min-height:0!important;
+}
+.art-screen,.level-screen{top:0!important;bottom:auto!important}
+.art-stage{height:100%!important}
+.art-stage .art-image{
+ object-fit:cover!important;
+ object-position:center center!important;
+}
+.level-screen{
+ background:
+ linear-gradient(180deg,rgba(7,14,49,.18),rgba(35,19,74,.22)),
+ url('/alchemy-atlas/assets/backgrounds/alchemy_forest.png') center center/cover no-repeat!important;
+}
+.map-topbar{top:0!important;min-height:8%!important}
+.map-footer{bottom:0!important;min-height:10%!important;padding:6px 12px!important}
+.map-actions{top:13%!important}
+.level-viewport{top:10%!important;bottom:12%!important}
+.level-head{min-height:36px!important;height:6%!important}
+.level-rivals{min-height:60px!important;height:10%!important}
+.level-controls{height:31%!important;min-height:0!important;padding-bottom:5px!important}
+.level-hint-wrap{flex:0 0 50px!important}
+.level-buttons{flex:0 0 44px!important}
+.level-buttons button{height:44px!important}
+.level-hand{min-height:0!important}
+@media(max-height:730px){
+ .level-head{min-height:34px!important}
+ .level-rivals{min-height:53px!important}
+ .level-controls{height:34%!important}
+ .level-hint-wrap{flex-basis:44px!important}
+ .level-buttons{flex-basis:38px!important}
+ .level-buttons button{height:38px!important}
+ .alchemy-map-card{width:clamp(62px,19vw,95px)!important}
+}
