@@ -477,3 +477,49 @@ html,body,#app,.art-screen,.level-screen{
  .level-buttons button{height:38px!important}
  .alchemy-map-card{width:clamp(62px,19vw,95px)!important}
 }
+
+
+/* Stable mobile viewport: no JS-driven resizing or edge gutters. */
+:root{--visible-height:100dvh}
+html,body,#app{height:100%!important;max-height:100%!important;overflow:hidden!important}
+.art-screen,.level-screen{
+ position:fixed!important;inset:0!important;
+ width:100vw!important;height:100dvh!important;max-height:100dvh!important;
+ margin:0!important;padding:0!important;overflow:hidden!important;
+ border:0!important;outline:0!important;box-shadow:none!important;
+}
+.art-stage{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;overflow:hidden!important;box-shadow:none!important}
+.art-stage .art-image{position:absolute!important;inset:0!important;object-fit:cover!important}
+.map-topbar{top:0!important;border:0!important}
+.map-footer{bottom:0!important;border:0!important;box-shadow:none!important}
+.level-screen{display:flex!important;flex-direction:column!important}
+.level-head{
+ display:grid!important;grid-template-columns:clamp(38px,11vw,55px) minmax(0,1fr) auto!important;
+ gap:5px!important;align-items:center!important;width:100%!important;
+ min-height:42px!important;height:42px!important;padding:2px 7px!important;
+ overflow:hidden!important;
+}
+.level-head button{min-width:0!important;width:100%!important;height:38px!important;padding:0!important}
+.level-head strong{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ height:40px!important;min-height:0!important;padding:5px 4px 0!important;
+ margin:0!important;white-space:nowrap!important;
+ font-size:clamp(10px,3vw,17px)!important;
+}
+.level-head #turn-count{font-size:clamp(11px,3vw,15px)!important;padding:0 2px!important}
+.level-rivals{min-height:58px!important;height:9%!important;overflow:hidden!important}
+.level-map-wrap{min-height:0!important;flex:1 1 0!important}
+.level-controls{height:31%!important;min-height:0!important;flex:0 0 31%!important;overflow:hidden!important}
+.level-hint-wrap{flex:0 0 49px!important}
+.level-buttons{flex:0 0 43px!important}
+.level-buttons button{height:43px!important}
+.level-ingredient{max-height:100%!important}
+@media(max-height:680px){
+ .level-head{height:37px!important;min-height:37px!important}
+ .level-head strong{height:35px!important}
+ .level-rivals{min-height:49px!important}
+ .level-controls{height:34%!important;flex-basis:34%!important}
+ .level-hint-wrap{flex-basis:42px!important}
+ .level-buttons{flex-basis:37px!important}
+ .level-buttons button{height:37px!important}
+}
