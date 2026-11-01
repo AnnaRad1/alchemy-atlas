@@ -121,7 +121,7 @@ function showHome(){
  // Coordinates are relative to the viewport, from near to far.
  const point=(t:number)=>{
   const depth=Math.max(0,Math.min(1,t));
-  return {x:0.5,y:0.91-depth*0.82};
+  return {x:0.5,y:0.82-depth*0.78};
  };
  const layer=document.querySelector<HTMLElement>('#moving-levels')!;
  const viewport=document.querySelector<HTMLElement>('#level-viewport')!;
@@ -141,7 +141,7 @@ function showHome(){
    button.className='moving-flask asset-level '+(n===1?'unlocked':'locked');
    button.style.left=(p.x*100)+'%';
    button.style.top=(p.y*100)+'%';
-   button.style.transform='translate(-50%,-50%) scale('+(1.02-0.35*t)+')';
+   button.style.transform='translate(-50%,-50%) scale('+(0.92-0.32*t)+')';
    button.setAttribute('aria-label','Уровень '+n+(n===1?' доступен':' закрыт'));
    button.innerHTML=
      '<img class="level-glow" src="./assets/effects/glow_'+color+'.png" alt="">'+
