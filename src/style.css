@@ -1133,3 +1133,8 @@ html,body,#app{height:100%!important;max-height:100%!important;overflow:hidden!i
  max-width:min(145px,38vw)!important;
  padding:4px 6px!important;
 }
+
+
+/* Align the back arrow's visible left edge with the first scaled hero card. */
+.level-head{padding-left:18px!important}
+.level-head button#back{transform:translateY(9px) scale(.88)!important;transform-origin:left center!important}
