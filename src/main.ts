@@ -140,7 +140,7 @@ function showHome(){
   range.textContent='Уровни '+start+'–'+(start+visibleCount);
   layer.replaceChildren();
   for(let n=Math.max(1,Math.floor(offset)-1);n<=Math.ceil(offset)+visibleCount+2;n++){
-   const t=0.83-(n-1-offset)*step;
+   const t=(n-1-offset)*step;
    if(t<0.04||t>0.96)continue;
    const p=point(t);
    const button=document.createElement('button');
