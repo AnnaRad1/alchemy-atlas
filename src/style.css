@@ -925,3 +925,21 @@ html,body,#app{height:100%!important;max-height:100%!important;overflow:hidden!i
  background-repeat:no-repeat!important;
  font-size:clamp(13px,3.6vw,17px)!important;
 }
+
+
+/* Center title against the SCREEN, not between unequal side controls. */
+.level-head{position:relative!important;display:flex!important;align-items:center!important;justify-content:space-between!important}
+.level-head strong{
+ position:absolute!important;
+ left:50%!important;
+ top:50%!important;
+ transform:translate(-50%,-50%)!important;
+ width:min(70vw,360px)!important;
+ max-width:calc(100vw - 140px)!important;
+ height:clamp(37px,5.2dvh,45px)!important;
+ background-size:contain!important;
+ margin:0!important;
+ z-index:1!important;
+ pointer-events:none!important;
+}
+.level-head button,.level-head #turn-count{position:relative!important;z-index:2!important;flex:0 0 auto!important}
