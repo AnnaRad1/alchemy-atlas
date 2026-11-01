@@ -143,13 +143,20 @@ function showHome(){
    button.style.top=(p.y*100)+'%';
    button.style.transform='translate(-50%,-50%) scale('+(0.92-0.32*t)+')';
    button.setAttribute('aria-label','Уровень '+n+(n===1?' доступен':' закрыт'));
+   // Prefer the approved complete badge, but retain the existing layered
+   // artwork until its PNG is present in the repository.
    button.innerHTML=
      '<img class="level-glow" src="./assets/effects/glow_'+color+'.png" alt="">'+
      '<img class="level-ring" src="./assets/levels/ring_vines.png" alt="">'+
      '<img class="level-gem" src="./assets/levels/crystal_'+color+'.png" alt="">'+
      '<img class="level-plaque" src="./assets/levels/number_plaque.png" alt="">'+
+     '<img class="level-complete" src="./assets/levels/level_'+color+'.png" alt="">'+
      '<span class="level-number">'+n+'</span>'+
      (n!==1?'<img class="level-lock" src="./assets/levels/lock.png" alt="">':'');
+   const complete=button.querySelector<HTMLImageElement>('.level-complete')!;
+   complete.onload=()=>button.classList.add('has-complete-badge');
+   complete.onerror=()=>complete.remove();
+   if(complete.complete&&complete.naturalWidth>0)button.classList.add('has-complete-badge');
    button.onclick=()=>{if(moved)return;if(n===1)begin();else openDialog('Уровень '+n+' пока закрыт. Сейчас доступен первый уровень.');};
    layer.appendChild(button);
   }
