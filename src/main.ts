@@ -38,7 +38,7 @@ function craft(p:Player,r:Recipe):boolean {
  if(r.reward){
   claimed[r.name]=p.name;p.flasks+=r.reward;
   note(`🏆 ${p.name} открыл(а) «${r.name}» и получил(а) ${r.reward} 🧪`);
-  if(!p.bot){saved.flasks+=r.reward;localStorage.setItem(SAVE_KEY,JSON.stringify(saved));}
+  if(!p.bot){saved.flasks+=r.reward;if(!saved.discoveries.includes(r.name))saved.discoveries.push(r.name);localStorage.setItem(SAVE_KEY,JSON.stringify(saved));}
  }else{
   add(p,r.name);
   if(!p.bot&&!saved.discoveries.includes(r.name)){saved.discoveries.push(r.name);localStorage.setItem(SAVE_KEY,JSON.stringify(saved));}
@@ -47,10 +47,11 @@ function craft(p:Player,r:Recipe):boolean {
  if(Object.keys(claimed).length===1){ended=true;note('Первое зелье создано! Уровень пройден.');}
  return true;
 }
-function start(){
+function start(level=currentLevel){
+ currentLevel=level;
  players=[{name:'Вы',hand:{},flasks:0,bot:false},{name:'Алхимик Лис',hand:{},flasks:0,bot:true},{name:'Мастер Сова',hand:{},flasks:0,bot:true}];
  claimed={};turn=1;actions=1;ended=false;messages=[];
- players.forEach(p=>draw(p,3));players[0].hand={'Вода':2,'Солнце':1,'Огонь':1};players[1].hand={'Вода':2,'Солнце':2};players[2].hand={'Вода':2,'Солнце':2};selectedRecipe='Роса';
+ players.forEach(p=>draw(p,3));players[0].hand=currentLevel===1?{'Вода':2,'Солнце':1,'Огонь':1}:{'Вода':3,'Солнце':1,'Огонь':1};players[1].hand={'Вода':2,'Солнце':2};players[2].hand={'Вода':2,'Солнце':2};selectedRecipe='Роса';
  note('Новая партия. Создавайте вещества и опередите соперников!');
  render();
 }
@@ -88,8 +89,7 @@ async function nextTurn(){
  if(ended)return;
  for(let i=1;i<3;i++){
   const bot=players[i];
-  const preferred='Роса';
-  const recipe=RECIPES().find(r=>r.name===preferred&&can(bot,r));
+  const recipe=currentLevel===1?RECIPES().find(r=>r.name==='Роса'&&can(bot,r)):(turn<3?RECIPES().find(r=>!r.reward&&can(bot,r)):chooseBotRecipe(bot));
   const card=document.querySelectorAll<HTMLElement>('.level-rival')[i];
   if(card){
    card.classList.add('rival-taking-turn');
