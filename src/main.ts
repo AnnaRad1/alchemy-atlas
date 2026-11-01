@@ -300,8 +300,8 @@ function render(){
 function drawLevelMap(){
  const board=document.querySelector<HTMLElement>('#board');
  if(!board)return;
- const names=['Вода','Солнце','Роса','Лунная капля'];
- const positions:Record<string,[number,number]>={'Вода':[28,16],'Солнце':[72,16],'Роса':[50,49],'Лунная капля':[50,83]};
+ const names=currentLevel===1?['Вода','Солнце','Роса','Лунная капля']:['Вода','Солнце','Огонь','Роса','Пар','Туман'];
+ const positions:Record<string,[number,number]>=currentLevel===1?{'Вода':[28,16],'Солнце':[72,16],'Роса':[50,49],'Лунная капля':[50,83]}:{'Вода':[18,14],'Солнце':[50,14],'Огонь':[82,14],'Роса':[30,48],'Пар':[70,48],'Туман':[50,83]};
  const lines='<svg class="alchemy-connections" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs><filter id="alchemy-glow"><feGaussianBlur stdDeviation="1.2"/></filter></defs><path d="M28 16 Q28 31 50 49 M72 16 Q72 31 50 49 M50 49 L50 83" fill="none" stroke="#ffc36c" stroke-width="1.8" filter="url(#alchemy-glow)"/><path d="M28 16 Q28 31 50 49 M72 16 Q72 31 50 49 M50 49 L50 83" fill="none" stroke="#ffe8a5" stroke-width=".65"/></svg>';
  board.innerHTML=lines+names.map(name=>{
   const [x,y]=positions[name];
@@ -309,7 +309,7 @@ function drawLevelMap(){
   const ready=!!recipe&&players.length>0&&actions>0&&!ended&&can(players[0],recipe);
   const chosen=selectedRecipe===name;
   const owned=players.length>0&&count(players[0],name)>0;
-  const locked=name==='Лунная капля'&&!claimed[name];
+  const locked=!!recipe?.reward&&!claimed[name];
   return `<button type="button" class="alchemy-map-card ${owned?'owned':ready?'ready':''} ${chosen?'chosen':''} ${locked?'secret':''}" data-element="${name}" style="left:${x}%;top:${y}%" aria-label="${name}"><img src="${elementImage(name)}" alt="${name}"></button>`;
  }).join('');
  board.querySelectorAll<HTMLButtonElement>('[data-element]').forEach(button=>{
