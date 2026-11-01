@@ -122,3 +122,9 @@ body:has(.art-screen){overflow:hidden;background:#0e1426}
 .asset-level.unlocked .level-glow{opacity:.55}
 .asset-level .level-ring{filter:drop-shadow(0 2px 4px #080e2a)}
 .asset-level .level-number{font-variant-numeric:tabular-nums}
+
+/* Leave clear room for a persistent bottom navigation row. */
+.level-viewport{bottom:17%}
+.moving-flask.asset-level{width:clamp(62px,18vw,94px);height:clamp(76px,21vw,112px)}
+.map-footer{min-height:12%;padding-bottom:max(10px,env(safe-area-inset-bottom))}
+.map-footer button{min-height:40px}
