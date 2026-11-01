@@ -128,3 +128,24 @@ body:has(.art-screen){overflow:hidden;background:#0e1426}
 .moving-flask.asset-level{width:clamp(62px,18vw,94px);height:clamp(76px,21vw,112px)}
 .map-footer{min-height:12%;padding-bottom:max(10px,env(safe-area-inset-bottom))}
 .map-footer button{min-height:40px}
+
+
+/* Cohesive badge composition: the number plaque is rendered in CSS,
+   independently of the PNG's transparent padding. */
+.asset-level .level-plaque{display:none}
+.asset-level .level-ring{left:0;top:0;width:100%;height:78%}
+.asset-level .level-gem{
+ left:24%;top:15%;width:52%;height:48%;
+ -webkit-mask-image:none;mask-image:none;
+ filter:drop-shadow(0 0 5px #a9e9ff70);
+}
+.asset-level .level-number{
+ left:20%;top:65%;width:60%;height:24%;
+ display:flex;align-items:center;justify-content:center;
+ border:1.5px solid #e8bd70;border-radius:50%;
+ background:linear-gradient(180deg,#5d3975 0%,#251631 75%);
+ box-shadow:0 2px 5px #070919b0,inset 0 1px 2px #d8a1e755;
+ font-size:clamp(14px,4vw,20px);line-height:1;
+ color:#fff2d3;text-shadow:0 1px 2px #000;
+}
+.asset-level .level-lock{left:75%;top:55%;width:23%;height:22%;filter:drop-shadow(0 1px 2px #000)}
