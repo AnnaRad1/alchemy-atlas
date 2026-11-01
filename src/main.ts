@@ -126,8 +126,8 @@ function showHome(){
  const illustration=document.querySelector<HTMLImageElement>('.art-image')!;
  illustration.onload=()=>stage.classList.add('art-ready');
  if(illustration.complete&&illustration.naturalWidth>0)stage.classList.add('art-ready');
- const begin=()=>{showGame();start();};
- document.querySelector<HTMLButtonElement>('#play-first')!.onclick=begin;
+ const begin=(level=1)=>{currentLevel=level;showGame();start(level);};
+ document.querySelector<HTMLButtonElement>('#play-first')!.onclick=()=>begin(1);
  const dialog=document.querySelector<HTMLElement>('#home-message')!;
  const openDialog=(message:string)=>{document.querySelector('#dialog-content')!.textContent=message;dialog.hidden=false;};
  document.querySelector<HTMLButtonElement>('#close-dialog')!.onclick=()=>{dialog.hidden=true;};
@@ -165,7 +165,7 @@ function showHome(){
      '<img class="level-complete" src="./assets/levels/level_'+color+'.png" alt="">'+
      '<span class="level-number">'+n+'</span>'+
      (n!==1?'<img class="level-lock" src="./assets/levels/lock.png" alt="">':'');
-   button.onclick=()=>{if(moved)return;if(n===1)begin();else openDialog('Уровень '+n+' пока закрыт. Сейчас доступен первый уровень.');};
+   button.onclick=()=>{if(moved)return;if(n<=2)begin(n);else openDialog('Уровень '+n+' пока закрыт.');};
    layer.appendChild(button);
   }
  };
