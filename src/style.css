@@ -943,3 +943,14 @@ html,body,#app{height:100%!important;max-height:100%!important;overflow:hidden!i
  pointer-events:none!important;
 }
 .level-head button,.level-head #turn-count{position:relative!important;z-index:2!important;flex:0 0 auto!important}
+
+
+/* Full title ornament including the upper crystal, lowered from the screen edge. */
+.level-head{position:relative!important;overflow:visible!important}
+.level-head strong{
+ top:calc(50% + 10px)!important;
+ transform:translate(-50%,-50%)!important;
+ background-size:contain!important;
+ background-position:center!important;
+ overflow:visible!important;
+}
