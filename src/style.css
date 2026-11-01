@@ -221,3 +221,38 @@ html,body{width:100%;height:100%;margin:0;padding:0;overflow:hidden;background:#
 
 /* No map heading: give its space back to the playable map. */
 .level-board{inset:0!important}
+
+
+/* Uploaded reusable UI artwork, applied only to level one. */
+.level-head strong{
+ display:flex;align-items:center;justify-content:center;
+ min-height:43px;flex:1;margin:0 7px;padding:5px 12px;
+ background:url('./assets/ui/title_panel.png') center/100% 100% no-repeat;
+ color:#fff2d8;text-shadow:0 2px 3px #211438;
+ font-size:clamp(13px,3.5vw,20px);
+}
+.level-recipe-hint{
+ order:0;min-height:64px;padding:10px 17px 10px 13px;
+ background: url('./assets/ui/hint_panel.png') center/100% 100% no-repeat!important;
+ border:0!important;border-radius:0;
+ color:#412657;text-shadow:0 1px #fff6db;
+ display:flex;flex-wrap:wrap;justify-content:center;align-content:center;gap:3px 10px;
+}
+.level-recipe-hint b{font-size:clamp(15px,4vw,20px);color:#3b2058}
+.level-recipe-hint span{font-size:clamp(11px,3vw,15px)}
+.level-recipe-hint small{font-size:clamp(11px,2.8vw,13px);color:#623c77}
+.level-inventory-title{order:1}
+.level-hand{order:2}
+.level-buttons{order:3;min-height:47px}
+.level-buttons button{
+ border:0!important;border-radius:0!important;
+ background-color:transparent!important;
+ background-position:center!important;background-size:100% 100%!important;background-repeat:no-repeat!important;
+ color:transparent!important;text-shadow:none!important;
+ font-size:0!important;
+}
+.level-buttons #make-selected{background-image:url('./assets/ui/button_create.png')!important}
+.level-buttons #next{background-image:url('./assets/ui/button_end_turn.png')!important}
+.level-buttons button:disabled{opacity:.5}
+.level-buttons button:focus-visible{outline:2px solid #ffdb7b;outline-offset:2px}
+@media(max-height:650px){.level-recipe-hint{min-height:48px;padding:5px 12px}.level-buttons{min-height:38px}}
