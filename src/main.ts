@@ -93,7 +93,7 @@ async function nextTurn(){
    card.classList.add('rival-taking-turn');
    const label=document.createElement('span');
    label.className='rival-action-label';
-   label.textContent=recipe?'✦ Создал '+recipe.name:'✦ Собирает ингредиенты';
+   label.textContent=recipe?'✦ Создано: '+recipe.name:'✦ Собирает ингредиенты';
    card.append(label);
   }
   if(recipe)craft(bot,recipe);else draw(bot,1);
@@ -267,7 +267,7 @@ function showGame(){
      card.classList.add('rival-taking-turn');
      const label=document.createElement('span');
      label.className='rival-action-label';
-     label.textContent='✦ Создана '+r.name;
+     label.textContent='✦ Создано: '+r.name;
      card.append(label);
      await new Promise<void>(resolve=>setTimeout(resolve,1050));
      label.remove();
