@@ -391,3 +391,33 @@ html,body{width:100%;height:100%;margin:0;padding:0;overflow:hidden;background:#
  .level-buttons button{height:39px}
  .alchemy-map-card{width:min(21vw,90px)}
 }
+
+
+/* Lock the document to the visible mobile viewport on both screens.
+   Level markers still scroll inside their own touch-enabled viewport. */
+html{
+ width:100%;height:100%;overflow:hidden!important;
+ overscroll-behavior:none;
+}
+body{
+ position:fixed!important;inset:0!important;
+ width:100%!important;height:100%!important;
+ margin:0!important;padding:0!important;
+ overflow:hidden!important;overscroll-behavior:none;
+}
+#app{
+ position:absolute!important;inset:0!important;
+ width:100%!important;height:100%!important;
+ min-height:0!important;max-height:100%!important;
+ padding:0!important;margin:0!important;
+ overflow:hidden!important;overscroll-behavior:none;
+}
+.art-screen,.level-screen{
+ position:absolute!important;inset:0!important;
+ width:100%!important;height:100%!important;
+ min-height:0!important;max-height:100%!important;
+ overflow:hidden!important;overscroll-behavior:none;
+}
+.art-stage{height:100%!important;max-height:100%!important}
+.level-viewport{overscroll-behavior:contain;touch-action:none}
+.level-map-wrap,.level-controls{min-height:0}
