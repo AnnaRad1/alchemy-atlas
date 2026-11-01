@@ -103,6 +103,7 @@ async function nextTurn(){
   if(!document.querySelector('.level-screen'))return;
   card?.classList.remove('rival-taking-turn');
   card?.querySelector('.rival-action-label')?.remove();
+  if(ended){render();return;}
  }
  turn++;actions=1;
  draw(players[0],2);
