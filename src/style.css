@@ -115,3 +115,16 @@ body:has(.art-screen){overflow:hidden;background:#0e1426}
 
 
 /* The purple number plaque is baked into the approved PNG. */
+
+/* Fix level badge alignment on mobile: center numbers on the purple plaques. */
+.asset-level .level-number{
+ left:25%;top:76%;width:50%;height:13%;
+ display:flex;align-items:center;justify-content:center;
+ padding:0;margin:0;border:0;background:transparent;box-shadow:none;
+ line-height:1;font-size:clamp(15px,4.1vw,21px);font-weight:800;
+ transform:translateY(-50%);
+}
+.asset-level .level-lock{
+ left:72%;top:43%;width:39%;height:39%;
+ object-fit:contain;filter:drop-shadow(0 2px 3px #000b);
+}
