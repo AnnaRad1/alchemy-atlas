@@ -95,24 +95,78 @@ function nextTurn(){
 const app=document.querySelector<HTMLDivElement>('#app')!;
 let game:Phaser.Game|null=null;
 function showHome(){
- app.innerHTML='<div class="art-screen"><div class="art-stage"><img class="art-image" src="./assets/home-art.webp" alt="Ночной волшебный лес и дорожка к алхимической башне"><div class="art-fallback"><h1>⚗️ Алхимический атлас</h1><p>Путь алхимика</p><p>Выберите первый уровень, чтобы начать</p></div><div class="art-hotspots"><button id="level-one" class="hotspot level-one" aria-label="Уровень 1"></button><button id="play-first" class="hotspot nav-levels" aria-label="Уровни"></button><button id="collection" class="hotspot collection" aria-label="Коллекция"></button><button id="rules" class="hotspot recipes" aria-label="Рецепты и правила"></button><button id="alchemy" class="hotspot alchemy" aria-label="Алхимия"></button><button id="chests" class="hotspot chests" aria-label="Сундуки"></button><button id="quests" class="hotspot quests" aria-label="Задания"></button><button id="shop" class="hotspot shop" aria-label="Магазин"></button><button id="bonus" class="hotspot bonus" aria-label="Бонус"></button><button id="settings" class="hotspot settings" aria-label="Настройки"></button></div><div id="home-message" class="art-dialog" hidden><button id="close-dialog" aria-label="Закрыть">✕</button><div id="dialog-content"></div></div></div></div>';
+ app.innerHTML=`<div class="art-screen"><div class="art-stage">
+ <img class="art-image" src="./assets/home-art.webp" alt="Волшебная лесная дорога">
+ <div class="art-fallback"><h1>⚗️ Алхимический атлас</h1><p>Путь алхимика</p></div>
+ <div class="level-viewport" id="level-viewport" aria-label="Прокрутка уровней"><div id="moving-levels"></div></div>
+ <div class="map-topbar"><span>⚗️ Алхимик</span><span>🧪 ${saved.flasks}</span></div>
+ <div class="map-actions"><button id="collection">Коллекция</button><button id="rules">Рецепты</button><button id="chests">Сундуки</button></div>
+ <div class="map-footer"><button id="play-first">Играть</button><span id="level-range">Уровни 1–5</span></div>
+ <div id="home-message" class="art-dialog" hidden><button id="close-dialog" aria-label="Закрыть">✕</button><div id="dialog-content"></div></div>
+ </div></div>`;
+ const stage=document.querySelector<HTMLElement>('.art-stage')!;
  const illustration=document.querySelector<HTMLImageElement>('.art-image')!;
- illustration.onload=()=>document.querySelector('.art-stage')?.classList.add('art-ready');
- if(illustration.complete&&illustration.naturalWidth>0)document.querySelector('.art-stage')?.classList.add('art-ready');
+ illustration.onload=()=>stage.classList.add('art-ready');
+ if(illustration.complete&&illustration.naturalWidth>0)stage.classList.add('art-ready');
  const begin=()=>{showGame();start();};
- document.querySelector<HTMLButtonElement>('#level-one')!.onclick=begin;
  document.querySelector<HTMLButtonElement>('#play-first')!.onclick=begin;
- document.querySelector<HTMLButtonElement>('#alchemy')!.onclick=begin;
  const dialog=document.querySelector<HTMLElement>('#home-message')!;
  const openDialog=(message:string)=>{document.querySelector('#dialog-content')!.textContent=message;dialog.hidden=false;};
  document.querySelector<HTMLButtonElement>('#close-dialog')!.onclick=()=>{dialog.hidden=true;};
  document.querySelector<HTMLButtonElement>('#collection')!.onclick=()=>openDialog('Открытые вещества: '+(saved.discoveries.join(', ')||'пока нет')+'.');
- document.querySelector<HTMLButtonElement>('#rules')!.onclick=()=>openDialog('Собирайте ингредиенты, создавайте подсвеченные рецепты и первыми открывайте три тайны. Колбочки сохраняются между партиями.');
+ document.querySelector<HTMLButtonElement>('#rules')!.onclick=()=>openDialog('Создавайте вещества по рецептам и первыми раскрывайте три тайны.');
  document.querySelector<HTMLButtonElement>('#chests')!.onclick=()=>openDialog('Сундуки появятся в следующих обновлениях.');
- document.querySelector<HTMLButtonElement>('#quests')!.onclick=()=>openDialog('Задания появятся в следующих обновлениях.');
- document.querySelector<HTMLButtonElement>('#shop')!.onclick=()=>openDialog('Магазин пока не открыт.');
- document.querySelector<HTMLButtonElement>('#bonus')!.onclick=()=>openDialog('Бонусы появятся позднее.');
- document.querySelector<HTMLButtonElement>('#settings')!.onclick=()=>openDialog('Настройки появятся позднее.');
+
+ // The background is stationary. Level nodes move continuously along a fixed
+ // normalized curve; changing scroll shifts them one by one, never in batches.
+ const path:[[number,number],...Array<[number,number]>]=[
+  [0.49,0.83],[0.47,0.72],[0.46,0.62],[0.50,0.53],
+  [0.59,0.45],[0.68,0.36],[0.74,0.27],[0.81,0.19]
+ ];
+ const point=(t:number)=>{
+  const v=Math.max(0,Math.min(path.length-1,t*(path.length-1)));
+  const i=Math.min(path.length-2,Math.floor(v)),f=v-i;
+  const smooth=f*f*(3-2*f);
+  return {x:path[i][0]+(path[i+1][0]-path[i][0])*smooth,
+          y:path[i][1]+(path[i+1][1]-path[i][1])*smooth};
+ };
+ const layer=document.querySelector<HTMLElement>('#moving-levels')!;
+ const viewport=document.querySelector<HTMLElement>('#level-viewport')!;
+ const range=document.querySelector<HTMLElement>('#level-range')!;
+ let offset=0,dragging=false,lastY=0,moved=false;
+ const visibleCount=5,step=0.155;
+ const update=()=>{
+  const start=Math.max(1,Math.floor(offset)+1);
+  range.textContent='Уровни '+start+'–'+(start+visibleCount);
+  layer.replaceChildren();
+  for(let n=Math.max(1,Math.floor(offset)-1);n<=Math.ceil(offset)+visibleCount+2;n++){
+   const t=0.83-(n-1-offset)*step;
+   if(t<0.04||t>0.96)continue;
+   const p=point(t);
+   const button=document.createElement('button');
+   button.className='moving-flask '+(n===1?'unlocked':'locked');
+   button.style.left=(p.x*100)+'%';
+   button.style.top=(p.y*100)+'%';
+   button.style.transform='translate(-50%,-50%) scale('+(0.77+0.23*t)+')';
+   button.setAttribute('aria-label','Уровень '+n+(n===1?' доступен':' закрыт'));
+   button.innerHTML='<span class="flask-glyph">'+(n===1?'⚗️':'🔒')+'</span><span class="flask-number">'+n+'</span>';
+   button.onclick=()=>{if(moved)return;if(n===1)begin();else openDialog('Уровень '+n+' пока закрыт. Сейчас доступен первый уровень.');};
+   layer.appendChild(button);
+  }
+ };
+ viewport.addEventListener('pointerdown',e=>{if(dialog.hidden===false)return;dragging=true;moved=false;lastY=e.clientY;viewport.setPointerCapture(e.pointerId);});
+ viewport.addEventListener('pointermove',e=>{
+  if(!dragging)return;
+  const dy=e.clientY-lastY;lastY=e.clientY;
+  if(Math.abs(dy)>0.5)moved=true;
+  offset=Math.max(0,Math.min(995,offset+dy/Math.max(1,viewport.clientHeight)*5.5));
+  update();
+ });
+ const stop=()=>{dragging=false;};
+ viewport.addEventListener('pointerup',stop);
+ viewport.addEventListener('pointercancel',stop);
+ viewport.addEventListener('wheel',e=>{e.preventDefault();offset=Math.max(0,Math.min(995,offset+e.deltaY/120));update();},{passive:false});
+ update();
 }
 function showGame(){
  app.innerHTML='<div class="shell game"><div class="game-header"><button id="back">← Уровни</button><span>Глава I · Пробуждение стихий</span></div><h1>⚗️ Алхимический атлас</h1><div id="stats" class="stats"></div><div id="players" class="players"></div><div id="board" class="board"></div><div class="boardnote">Подсвеченные золотом рецепты можно создать прямо сейчас</div><div id="hint" class="hint"></div><h2>Превращения</h2><div id="recipes" class="actions"></div><h2>Мои ингредиенты</h2><div id="hand" class="hand"></div><div class="footer"><button id="next">Завершить ход →</button><button id="restart">Новая партия</button></div><h2>Летопись открытий</h2><div id="log" class="log"></div></div>';
