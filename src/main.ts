@@ -6,14 +6,11 @@ type Secret = 'Лунная капля'|'Живой кристалл'|'Золо�
 type Recipe = {name:Ingredient|Secret; inputs:Ingredient[]; reward?:number};
 type Player = {name:string; hand:Record<string,number>; flasks:number; bot:boolean};
 type Save = {flasks:number; discoveries:string[]};
-const BASE:Ingredient[]=['Вода','Солнце','Трава','Огонь','Воздух','Земля'];
+const BASE:Ingredient[]=['Вода','Солнце','Огонь'];
 const RECIPES:Recipe[]=[
-{name:'Роса',inputs:['Вода','Солнце']},{name:'Пар',inputs:['Вода','Огонь']},
-{name:'Росток',inputs:['Земля','Вода']},{name:'Искра',inputs:['Огонь','Воздух']},
-{name:'Туман',inputs:['Пар','Воздух']},{name:'Жизнь',inputs:['Росток','Солнце']},
-{name:'Лунная капля',inputs:['Роса','Туман'],reward:1},
-{name:'Живой кристалл',inputs:['Жизнь','Искра'],reward:2},
-{name:'Золотой эликсир',inputs:['Роса','Жизнь','Искра'],reward:3}
+{name:'Роса',inputs:['Вода','Солнце']},
+{name:'Пар',inputs:['Вода','Огонь']},
+{name:'Лунная капля',inputs:['Роса','Пар'],reward:1}
 ];
 const EMOJI:Record<string,string>={'Вода':'💧','Солнце':'☀️','Трава':'🌿','Огонь':'🔥','Воздух':'🌬️','Земля':'🪨','Роса':'💠','Пар':'♨️','Росток':'🌱','Искра':'✨','Туман':'🌫️','Жизнь':'🍃'};
 const SAVE_KEY='alchemy-atlas-v1';
@@ -43,13 +40,13 @@ function craft(p:Player,r:Recipe):boolean {
   if(!p.bot&&!saved.discoveries.includes(r.name)){saved.discoveries.push(r.name);localStorage.setItem(SAVE_KEY,JSON.stringify(saved));}
   note(`${p.name}: ${r.inputs.join(' + ')} → ${r.name}`);
  }
- if(Object.keys(claimed).length===3){ended=true;note('Все три тайны раскрыты! Партия завершена.');}
+ if(Object.keys(claimed).length===1){ended=true;note('Первое зелье создано! Уровень пройден.');}
  return true;
 }
 function start(){
  players=[{name:'Вы',hand:{},flasks:0,bot:false},{name:'Алхимик Лис',hand:{},flasks:0,bot:true},{name:'Мастер Сова',hand:{},flasks:0,bot:true}];
  claimed={};turn=1;actions=2;ended=false;messages=[];
- players.forEach(p=>draw(p,4));
+ players.forEach(p=>draw(p,3));players[0].hand={'Вода':2,'Солнце':1,'Огонь':1};selectedRecipe='Роса';
  note('Новая партия. Создавайте вещества и опередите соперников!');
  render();
 }
@@ -85,11 +82,9 @@ function chooseBotRecipe(p:Player):Recipe|undefined{
 }
 function nextTurn(){
  if(ended)return;
- for(const bot of players.slice(1)){
-  draw(bot,2);
-  for(let i=0;i<2&&!ended;i++){const recipe=chooseBotRecipe(bot);if(recipe)craft(bot,recipe);}
- }
- if(!ended){turn++;actions=2;draw(players[0],2);note(`Ход ${turn}: вы получили два новых элемента.`);}
+ turn++;actions=2;
+ draw(players[0],2);
+ note('Ход '+turn+': получены новые ингредиенты.');
  render();
 }
 const app=document.querySelector<HTMLDivElement>('#app')!;
@@ -176,16 +171,16 @@ function showHome(){
 let selectedRecipe:string='Роса';
 function showGame(){
  app.innerHTML=`<div class="level-screen">
-  <header class="level-head"><button id="back" aria-label="К уровням">←</button><strong>Уровень 1 · Три тайны</strong><span id="turn-count"></span></header>
+  <header class="level-head"><button id="back" aria-label="К уровням">←</button><strong>Уровень 1 · Первая капля</strong><span id="turn-count"></span></header>
   <section id="players" class="level-rivals"></section>
-  <section class="level-map-wrap"><div class="level-map-title">Карта превращений</div><div id="board" class="level-board"></div></section>
+  <section class="level-map-wrap"><div class="level-map-title">Создай Лунную каплю</div><div id="board" class="level-board"></div></section>
   <section class="level-controls">
    <div class="level-inventory-title">Твои ингредиенты <span id="action-count"></span></div>
    <div id="hand" class="level-hand"></div>
    <div id="hint" class="level-recipe-hint"></div>
    <div class="level-buttons"><button id="make-selected">Создать</button><button id="next">Закончить ход →</button></div>
   </section>
-  <div id="level-result" class="level-result" hidden><div class="level-result-card"><h2>Три тайны раскрыты!</h2><p id="result-text"></p><button id="restart">Новая партия</button><button id="result-back">К уровням</button></div></div>
+  <div id="level-result" class="level-result" hidden><div class="level-result-card"><h2>Первое зелье готово!</h2><p id="result-text"></p><button id="restart">Новая партия</button><button id="result-back">К уровням</button></div></div>
  </div>`;
  document.querySelector<HTMLButtonElement>('#back')!.onclick=showHome;
  document.querySelector<HTMLButtonElement>('#next')!.onclick=nextTurn;
@@ -223,10 +218,9 @@ class AtlasScene extends Phaser.Scene{
   this.children.removeAll();
   const g=this.add.graphics();
   const positions:Record<string,[number,number]>={
-   'Вода':[45,50],'Солнце':[145,50],'Трава':[245,50],'Огонь':[345,50],'Воздух':[445,50],'Земля':[545,50],
-   'Роса':[95,155],'Пар':[215,155],'Росток':[335,155],'Искра':[455,155],
-   'Туман':[215,260],'Жизнь':[395,260],
-   'Лунная капля':[110,355],'Живой кристалл':[325,355],'Золотой эликсир':[535,355]
+   'Вода':[110,70],'Солнце':[300,70],'Огонь':[490,70],
+   'Роса':[205,205],'Пар':[395,205],
+   'Лунная капля':[300,355]
   };
   const scale=Math.min((w-20)/600,(h-20)/405), ox=(w-600*scale)/2,oy=(h-405*scale)/2;
   const pt=(n:string)=>{const p=positions[n];return [ox+p[0]*scale,oy+p[1]*scale] as const;};
@@ -237,12 +231,12 @@ class AtlasScene extends Phaser.Scene{
    const owner=claimed[name];
    const recipe=RECIPES.find(r=>r.name===name);
    const ready=!!recipe&&players.length>0&&actions>0&&!ended&&can(players[0],recipe);
-   const side=Math.max(23,43*scale),radius=Math.max(5,8*scale);
+   const side=Math.max(45,72*scale),radius=Math.max(5,8*scale);
    if(ready){g.fillStyle(0xf5c950,.5);g.fillRoundedRect(x-side/2-5,y-side/2-5,side+10,side+10,radius+3);}
    g.fillStyle(owner?0xb5c49b:ready?0xffdf88:secret?0xb38a4c:0xf7e7c5,1);g.lineStyle(ready?3:2,ready?0xd89b22:0x75512c,1);
    g.fillRoundedRect(x-side/2,y-side/2,side,side,radius);g.strokeRoundedRect(x-side/2,y-side/2,side,side,radius);
-   this.add.text(x,y-2,secret?(owner?'✓':'?'):(EMOJI[name]||'✦'),{fontSize:`${Math.max(14,21*scale)}px`,color:'#4c311d'}).setOrigin(.5);
-   this.add.text(x,y+Math.max(16,24*scale),name,{fontSize:`${Math.max(9,12*scale)}px`,color:'#f9e9ca',backgroundColor:'#33244bc9',padding:{x:3,y:2}}).setOrigin(.5);
+   this.add.text(x,y-2,secret?(owner?'✓':'?'):(EMOJI[name]||'✦'),{fontSize:`${Math.max(22,34*scale)}px`,color:'#4c311d'}).setOrigin(.5);
+   this.add.text(x,y+Math.max(16,24*scale),name,{fontSize:`${Math.max(13,18*scale)}px`,color:'#f9e9ca',backgroundColor:'#33244bc9',padding:{x:3,y:2}}).setOrigin(.5);
    const hit=this.add.zone(x,y,Math.max(46,76*scale),Math.max(46,66*scale)).setInteractive({useHandCursor:true});
    hit.on('pointerdown',()=>{if(recipe){selectedRecipe=name;render();}});
 
