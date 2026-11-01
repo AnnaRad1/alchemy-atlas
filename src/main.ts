@@ -178,7 +178,7 @@ function showGame(){
   <section class="level-map-wrap"><div id="board" class="level-board"></div></section>
   <section class="level-controls">
    <div class="level-hint-wrap"><div id="hint" class="level-recipe-hint"></div></div>
-   <div class="level-inventory-title">Твои ингредиенты <span id="action-count"></span></div>
+   <div class="level-inventory-title">Твои ингредиенты</div>
    <div id="hand" class="level-hand"></div>
    <div class="level-buttons"><button id="make-selected">Создать</button><button id="next">Закончить ход →</button></div>
   </section>
@@ -198,7 +198,7 @@ function render(){
  const me=players[0];if(!me||!document.querySelector('.level-screen'))return;
  document.querySelector('#turn-count')!.textContent='Ход '+turn;
  document.querySelector('#players')!.innerHTML=players.map((p,i)=>`<div class="level-rival ${i===0?'is-me':''}"><div class="rival-face">${i===0?'🧙‍♀️':i===1?'🦊':'🦉'}</div><span>${p.name}</span><b>🧪 ${p.flasks}</b></div>`).join('');
- document.querySelector('#action-count')!.textContent='· действий: '+actions;
+
  document.querySelector('#hand')!.innerHTML=Object.entries(me.hand).filter(([,n])=>n>0).map(([k,n])=>`<div class="level-ingredient"><img src="${elementImage(k)}" alt="${k}"><b>×${n}</b></div>`).join('')||'<span>Ингредиенты закончились</span>';
  const r=RECIPES.find(x=>x.name===selectedRecipe)||RECIPES[0];
  const missing=r.inputs.filter(k=>count(me,k)<r.inputs.filter(x=>x===k).length);
