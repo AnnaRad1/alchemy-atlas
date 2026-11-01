@@ -110,3 +110,15 @@ body:has(.art-screen){overflow:hidden;background:#0e1426}
 .asset-level .level-lock{left:70%;top:51%;width:26%;height:28%;z-index:6}
 .asset-level.locked .level-glow{opacity:.24}
 @keyframes crystal-pulse{to{opacity:1;filter:brightness(1.2)}}
+
+
+/* Straight forest map: prevent the crystal crop's hard square edges */
+.asset-level .level-gem{
+  -webkit-mask-image:radial-gradient(ellipse 48% 48% at 50% 50%,#000 52%,transparent 100%);
+  mask-image:radial-gradient(ellipse 48% 48% at 50% 50%,#000 52%,transparent 100%);
+  left:22%;top:11%;width:56%;height:62%;
+}
+.asset-level .level-glow{opacity:.26;mix-blend-mode:screen}
+.asset-level.unlocked .level-glow{opacity:.55}
+.asset-level .level-ring{filter:drop-shadow(0 2px 4px #080e2a)}
+.asset-level .level-number{font-variant-numeric:tabular-nums}
