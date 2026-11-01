@@ -171,3 +171,24 @@ html,body,#app{height:100%;margin:0}
 .level-result-card{width:min(100%,400px);padding:25px;border:3px solid #d4b06e;border-radius:18px;background:#302749;text-align:center}
 .level-result-card button{margin:5px;padding:10px;border:1px solid #d4b06e;border-radius:8px;background:#5b477a;color:white}
 @media(max-height:650px){.level-rivals{height:11%;min-height:62px}.level-controls{height:31%;min-height:160px}.level-hand{min-height:42px}.level-map-title{font-size:12px}}
+
+/* Level 1: seamless full-screen playfield, no inset card or picture frame. */
+.level-screen{
+ background:linear-gradient(180deg,#334c89 0%,#40568e 23%,#445083 48%,#343d71 73%,#253258 100%);
+ gap:0;
+}
+.level-head{background:transparent;border:0;box-shadow:none}
+.level-rivals{background:transparent}
+.level-rival{background:#293f7280;border:0;border-radius:12px;box-shadow:none}
+.level-rival.is-me{background:#344b84a6;border:1px solid #d2b77770}
+.level-map-wrap{
+ margin:0; border:0; border-radius:0;box-shadow:none;
+ background:transparent;
+}
+.level-map-title{color:#f6e6c5;text-shadow:0 1px 3px #17264e}
+.level-board{inset:24px 0 0}
+.level-controls{
+ background:transparent;border:0;box-shadow:none;
+ padding-left:9px;padding-right:9px;
+}
+.level-recipe-hint{background:#263b6899;border:0;box-shadow:none}
