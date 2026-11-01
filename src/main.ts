@@ -192,8 +192,7 @@ function showGame(){
   const r=RECIPES.find(x=>x.name===selectedRecipe);
   if(r&&actions>0&&craft(players[0],r)){actions--;render();}
  };
- if(!game)game=new Phaser.Game({type:Phaser.AUTO,parent:'board',width:640,height:430,transparent:true,scene:[AtlasScene],scale:{mode:Phaser.Scale.FIT,autoCenter:Phaser.Scale.CENTER_BOTH}});
- else {document.querySelector('#board')!.appendChild(game.canvas);game.scale.refresh();mapScene?.drawMap();}
+ drawLevelMap();
 }
 function render(){
  const me=players[0];if(!me||!document.querySelector('.level-screen'))return;
@@ -210,7 +209,25 @@ function render(){
  const result=document.querySelector<HTMLElement>('#level-result')!;
  result.hidden=!ended;
  if(ended)document.querySelector('#result-text')!.textContent=players.map(p=>p.name+': '+p.flasks+' 🧪').join(' · ');
- mapScene?.drawMap();
+ drawLevelMap();
+}
+function drawLevelMap(){
+ const board=document.querySelector<HTMLElement>('#board');
+ if(!board)return;
+ const names=['Вода','Солнце','Роса','Лунная капля'];
+ const positions:Record<string,[number,number]>={'Вода':[28,16],'Солнце':[72,16],'Роса':[50,49],'Лунная капля':[50,83]};
+ const lines='<svg class="alchemy-connections" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs><filter id="alchemy-glow"><feGaussianBlur stdDeviation="1.2"/></filter></defs><path d="M28 16 Q28 31 50 49 M72 16 Q72 31 50 49 M50 49 L50 83" fill="none" stroke="#ffc36c" stroke-width="1.8" filter="url(#alchemy-glow)"/><path d="M28 16 Q28 31 50 49 M72 16 Q72 31 50 49 M50 49 L50 83" fill="none" stroke="#ffe8a5" stroke-width=".65"/></svg>';
+ board.innerHTML=lines+names.map(name=>{
+  const [x,y]=positions[name];
+  const recipe=RECIPES.find(r=>r.name===name);
+  const ready=!!recipe&&players.length>0&&actions>0&&!ended&&can(players[0],recipe);
+  const chosen=selectedRecipe===name;
+  const locked=name==='Лунная капля'&&!claimed[name];
+  return `<button type="button" class="alchemy-map-card ${ready?'ready':''} ${chosen?'chosen':''} ${locked?'secret':''}" data-element="${name}" style="left:${x}%;top:${y}%" aria-label="${name}"><img src="${elementImage(name)}" alt="${name}"></button>`;
+ }).join('');
+ board.querySelectorAll<HTMLButtonElement>('[data-element]').forEach(button=>{
+  button.onclick=()=>{const name=button.dataset.element!;if(RECIPES.some(r=>r.name===name)){selectedRecipe=name;render();}};
+ });
 }
 class AtlasScene extends Phaser.Scene{
  constructor(){super('Atlas');}
