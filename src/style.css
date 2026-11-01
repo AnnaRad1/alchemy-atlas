@@ -52,3 +52,28 @@ body:has(.world){overflow:hidden;background:#152b35}
 .world-dialog[hidden]{display:none}.world-dialog{position:absolute;z-index:20;top:50%;left:50%;transform:translate(-50%,-50%);width:min(88%,380px);padding:35px 20px 24px;background:linear-gradient(#f5e6c0,#d5b37a);border:5px double #78512d;border-radius:18px;box-shadow:0 0 0 999px #081826a8,0 12px 35px #000a;color:#4d3021;text-align:center;line-height:1.5}.world-dialog #close-dialog{position:absolute;right:8px;top:8px;padding:3px 9px}
 #app:has(.game){max-width:1040px;padding:12px}
 @media(max-width:420px){.world-node{width:150px}.world-bottle{width:90px;height:103px}.world-bottle.active{width:109px;height:119px}.world-mark span{font-size:11px}.world-top{padding-left:11px;padding-right:11px}}
+
+
+/* Illustrated mobile map: background and buttons remain separate */
+body:has(.art-screen){overflow:hidden;background:#0e1426}
+#app:has(.art-screen){max-width:none;padding:0}
+.art-screen{height:100vh;height:100dvh;width:100%;display:flex;justify-content:center;align-items:center;overflow:hidden;background:radial-gradient(#243a56,#0b1021)}
+.art-stage{position:relative;width:min(100vw,75vh);width:min(100vw,75dvh);height:100%;aspect-ratio:1086/1448;overflow:hidden;background:radial-gradient(ellipse at 50% 20%,#38536b,#171b37 55%,#0a0f20);box-shadow:0 0 60px #000a}
+.art-image{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:none}
+.art-stage.art-ready .art-image{display:block}
+.art-fallback{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:20px;color:#f5e2b5;text-align:center;background:radial-gradient(#3b3d63,#161d34 70%)}.art-fallback h1{font-size:clamp(22px,5vw,34px)}.art-ready .art-fallback{display:none}
+.art-hotspots{position:absolute;inset:0;z-index:3}.hotspot{position:absolute;display:block;border:0;background:transparent;padding:0;border-radius:14px;cursor:pointer;touch-action:manipulation}
+.hotspot:focus-visible{outline:3px solid #ffe3a3;outline-offset:2px}.hotspot:active{background:#fff3a52a;transform:scale(.97)}
+.hotspot.level-one{left:39%;top:56%;width:21%;height:16%}
+.hotspot.nav-levels{left:3%;bottom:2%;width:20%;height:12%}
+.hotspot.alchemy{left:23%;bottom:2%;width:19%;height:12%}
+.hotspot.recipes{left:43%;bottom:2%;width:19%;height:12%}
+.hotspot.collection{left:2%;top:39%;width:21%;height:12%}
+.hotspot.chests{left:2%;top:14%;width:21%;height:12%}
+.hotspot.quests{left:2%;top:26%;width:21%;height:12%}
+.hotspot.shop{right:2%;top:14%;width:21%;height:13%}
+.hotspot.bonus{right:2%;top:27%;width:21%;height:14%}
+.hotspot.settings{right:1%;top:0%;width:10%;height:9%}
+.art-stage:not(.art-ready) .hotspot{border:1px solid #c5a269;background:#422e59b8;color:#ffe8b4;box-shadow:0 3px 10px #0007}
+.art-stage:not(.art-ready) .hotspot:after{position:absolute;inset:0;display:flex;justify-content:center;align-items:center;font-size:11px;content:attr(aria-label)}
+.art-dialog[hidden]{display:none}.art-dialog{position:absolute;z-index:10;left:8%;right:8%;top:40%;padding:40px 16px 25px;border-radius:16px;border:3px solid #c39a5a;background:#e9d6b0;color:#493020;box-shadow:0 0 0 100vh #0009,0 10px 40px #000a;text-align:center}.art-dialog #close-dialog{position:absolute;right:9px;top:8px}
