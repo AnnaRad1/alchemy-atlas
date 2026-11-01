@@ -948,7 +948,7 @@ html,body,#app{height:100%!important;max-height:100%!important;overflow:hidden!i
 /* Full title ornament including the upper crystal, lowered from the screen edge. */
 .level-head{position:relative!important;overflow:visible!important}
 .level-head strong{
- top:calc(50% + 10px)!important;
+ top:calc(50% + 5px)!important;
  transform:translate(-50%,-50%)!important;
  background-size:contain!important;
  background-position:center!important;
