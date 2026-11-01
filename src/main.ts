@@ -173,31 +173,46 @@ function showHome(){
  viewport.addEventListener('wheel',e=>{e.preventDefault();offset=Math.max(0,Math.min(995,offset+e.deltaY/120));update();},{passive:false});
  update();
 }
+let selectedRecipe:string='Роса';
 function showGame(){
- app.innerHTML='<div class="shell game"><div class="game-header"><button id="back">← Уровни</button><span>Глава I · Пробуждение стихий</span></div><h1>⚗️ Алхимический атлас</h1><div id="stats" class="stats"></div><div id="players" class="players"></div><div id="board" class="board"></div><div class="boardnote">Подсвеченные золотом рецепты можно создать прямо сейчас</div><div id="hint" class="hint"></div><h2>Превращения</h2><div id="recipes" class="actions"></div><h2>Мои ингредиенты</h2><div id="hand" class="hand"></div><div class="footer"><button id="next">Завершить ход →</button><button id="restart">Новая партия</button></div><h2>Летопись открытий</h2><div id="log" class="log"></div></div>';
+ app.innerHTML=`<div class="level-screen">
+  <header class="level-head"><button id="back" aria-label="К уровням">←</button><strong>Уровень 1 · Три тайны</strong><span id="turn-count"></span></header>
+  <section id="players" class="level-rivals"></section>
+  <section class="level-map-wrap"><div class="level-map-title">Карта превращений</div><div id="board" class="level-board"></div></section>
+  <section class="level-controls">
+   <div class="level-inventory-title">Твои ингредиенты <span id="action-count"></span></div>
+   <div id="hand" class="level-hand"></div>
+   <div id="hint" class="level-recipe-hint"></div>
+   <div class="level-buttons"><button id="make-selected">Создать</button><button id="next">Закончить ход →</button></div>
+  </section>
+  <div id="level-result" class="level-result" hidden><div class="level-result-card"><h2>Три тайны раскрыты!</h2><p id="result-text"></p><button id="restart">Новая партия</button><button id="result-back">К уровням</button></div></div>
+ </div>`;
  document.querySelector<HTMLButtonElement>('#back')!.onclick=showHome;
  document.querySelector<HTMLButtonElement>('#next')!.onclick=nextTurn;
  document.querySelector<HTMLButtonElement>('#restart')!.onclick=start;
- if(!game)game=new Phaser.Game({type:Phaser.AUTO,parent:'board',width:640,height:430,backgroundColor:'#ead8b5',scene:[AtlasScene],scale:{mode:Phaser.Scale.FIT,autoCenter:Phaser.Scale.CENTER_BOTH}});
+ document.querySelector<HTMLButtonElement>('#result-back')!.onclick=showHome;
+ document.querySelector<HTMLButtonElement>('#make-selected')!.onclick=()=>{
+  const r=RECIPES.find(x=>x.name===selectedRecipe);
+  if(r&&actions>0&&craft(players[0],r)){actions--;render();}
+ };
+ if(!game)game=new Phaser.Game({type:Phaser.AUTO,parent:'board',width:640,height:430,transparent:true,scene:[AtlasScene],scale:{mode:Phaser.Scale.FIT,autoCenter:Phaser.Scale.CENTER_BOTH}});
  else {document.querySelector('#board')!.appendChild(game.canvas);game.scale.refresh();mapScene?.drawMap();}
 }
 function render(){
- const me=players[0];if(!me)return;
- document.querySelector('#stats')!.innerHTML=`<span class="pill">🧪 Всего накоплено: <b>${saved.flasks}</b></span><span class="pill">Ход: ${turn}</span><span class="pill">Превращений: ${actions}</span><span class="pill">Коллекция: ${saved.discoveries.length}/6</span>`;
- document.querySelector('#players')!.innerHTML=players.map(p=>`<span class="pill">${p.name}: ${p.flasks} 🧪</span>`).join('');
- document.querySelector('#hint')!.textContent=ended?'Партия завершена. Нажмите «Новая партия», чтобы заработать ещё колбочки.': 'Собирайте ингредиенты, создавайте промежуточные вещества и первыми открывайте тайны. Все рецепты показаны на карте.';
- const recipeEl=document.querySelector('#recipes')!;recipeEl.innerHTML='';
- RECIPES.forEach(r=>{
-  const btn=document.createElement('button');btn.className='element '+(r.reward?'secret ':'')+(can(me,r)&&actions>0?'ready':'');
-  btn.textContent=`${r.reward?'❓ ':EMOJI[r.name]||'⚗️ '}${r.name} ${r.reward?'('+r.reward+' 🧪)':''}`;
-  btn.title=r.inputs.join(' + ')+' → '+r.name;
-  btn.disabled=ended||actions===0||!!claimed[r.name]||!can(me,r);
-  btn.onclick=()=>{if(craft(me,r)){actions--;render();}};
-  recipeEl.appendChild(btn);
- });
- document.querySelector('#hand')!.innerHTML=Object.entries(me.hand).filter(([,n])=>n>0).map(([k,n])=>'<span class="ingredient-tile"><span class="ingredient-icon">'+(EMOJI[k]||'⚗️')+'</span><span>'+k+'</span><b>×'+n+'</b></span>').join('')||'Нет ингредиентов';
+ const me=players[0];if(!me||!document.querySelector('.level-screen'))return;
+ document.querySelector('#turn-count')!.textContent='Ход '+turn;
+ document.querySelector('#players')!.innerHTML=players.map((p,i)=>`<div class="level-rival ${i===0?'is-me':''}"><div class="rival-face">${i===0?'🧙‍♀️':i===1?'🦊':'🦉'}</div><span>${p.name}</span><b>🧪 ${p.flasks}</b></div>`).join('');
+ document.querySelector('#action-count')!.textContent='· действий: '+actions;
+ document.querySelector('#hand')!.innerHTML=Object.entries(me.hand).filter(([,n])=>n>0).map(([k,n])=>`<div class="level-ingredient"><span>${EMOJI[k]||'⚗️'}</span><small>${k}</small><b>×${n}</b></div>`).join('')||'<span>Ингредиенты закончились</span>';
+ const r=RECIPES.find(x=>x.name===selectedRecipe)||RECIPES[0];
+ const missing=r.inputs.filter(k=>count(me,k)<r.inputs.filter(x=>x===k).length);
+ document.querySelector('#hint')!.innerHTML=`<b>${r.name}</b><span>${r.inputs.map(k=>(EMOJI[k]||'✦')+' '+k).join(' + ')}</span><small>${claimed[r.name]?'Тайна уже открыта':missing.length?'Не хватает: '+[...new Set(missing)].join(', '):'✓ Можно создать'}</small>`;
+ const make=document.querySelector<HTMLButtonElement>('#make-selected')!;
+ make.disabled=ended||actions===0||!can(me,r);
  document.querySelector<HTMLButtonElement>('#next')!.disabled=ended;
- document.querySelector('#log')!.innerHTML=messages.map(m=>`<div>• ${m}</div>`).join('');
+ const result=document.querySelector<HTMLElement>('#level-result')!;
+ result.hidden=!ended;
+ if(ended)document.querySelector('#result-text')!.textContent=players.map(p=>p.name+': '+p.flasks+' 🧪').join(' · ');
  mapScene?.drawMap();
 }
 class AtlasScene extends Phaser.Scene{
@@ -227,7 +242,10 @@ class AtlasScene extends Phaser.Scene{
    g.fillStyle(owner?0xb5c49b:ready?0xffdf88:secret?0xb38a4c:0xf7e7c5,1);g.lineStyle(ready?3:2,ready?0xd89b22:0x75512c,1);
    g.fillRoundedRect(x-side/2,y-side/2,side,side,radius);g.strokeRoundedRect(x-side/2,y-side/2,side,side,radius);
    this.add.text(x,y-2,secret?(owner?'✓':'?'):(EMOJI[name]||'✦'),{fontSize:`${Math.max(14,21*scale)}px`,color:'#4c311d'}).setOrigin(.5);
-   this.add.text(x,y+Math.max(16,24*scale),name,{fontSize:`${Math.max(9,12*scale)}px`,color:'#533b25',backgroundColor:'#ead8b5'}).setOrigin(.5);
+   this.add.text(x,y+Math.max(16,24*scale),name,{fontSize:`${Math.max(9,12*scale)}px`,color:'#f9e9ca',backgroundColor:'#33244bc9',padding:{x:3,y:2}}).setOrigin(.5);
+   const hit=this.add.zone(x,y,Math.max(46,76*scale),Math.max(46,66*scale)).setInteractive({useHandCursor:true});
+   hit.on('pointerdown',()=>{if(recipe){selectedRecipe=name;render();}});
+
   }
  }
 }
