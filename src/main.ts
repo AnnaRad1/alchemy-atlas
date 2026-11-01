@@ -48,7 +48,7 @@ function craft(p:Player,r:Recipe):boolean {
 function start(){
  players=[{name:'Вы',hand:{},flasks:0,bot:false},{name:'Алхимик Лис',hand:{},flasks:0,bot:true},{name:'Мастер Сова',hand:{},flasks:0,bot:true}];
  claimed={};turn=1;actions=1;ended=false;messages=[];
- players.forEach(p=>draw(p,3));players[0].hand={'Вода':2,'Солнце':1,'Огонь':1};players[1].hand={'Вода':2,'Огонь':2};players[2].hand={'Вода':2,'Солнце':2};selectedRecipe='Роса';
+ players.forEach(p=>draw(p,3));players[0].hand={'Вода':2,'Солнце':1,'Огонь':1};players[1].hand={'Вода':2,'Солнце':2};players[2].hand={'Вода':2,'Солнце':2};selectedRecipe='Роса';
  note('Новая партия. Создавайте вещества и опередите соперников!');
  render();
 }
@@ -86,7 +86,7 @@ async function nextTurn(){
  if(ended)return;
  for(let i=1;i<3;i++){
   const bot=players[i];
-  const preferred=i===2?'Роса':'Пар';
+  const preferred='Роса';
   const recipe=RECIPES.find(r=>r.name===preferred&&can(bot,r));
   const card=document.querySelectorAll<HTMLElement>('.level-rival')[i];
   if(card){
