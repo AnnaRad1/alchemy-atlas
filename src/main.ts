@@ -197,7 +197,7 @@ function showGame(){
 function render(){
  const me=players[0];if(!me||!document.querySelector('.level-screen'))return;
  document.querySelector('#turn-count')!.textContent='Ход '+turn;
- document.querySelector('#players')!.innerHTML=players.map((p,i)=>`<div class="level-rival ${i===0?'is-me':''}"><div class="rival-face">${i===0?'🧙‍♀️':i===1?'🦊':'🦉'}</div><span>${p.name}</span><b>🧪 ${p.flasks}</b></div>`).join('');
+ document.querySelector('#players')!.innerHTML=players.map((p,i)=>`<div class="level-rival ${i===0?'is-me':''}"><div class="rival-top"><div class="rival-face">${i===0?'🧙‍♀️':i===1?'🦊':'🦉'}</div><b class="rival-flasks"><span>🧪</span><span>${p.flasks}</span></b></div><span class="rival-name">${p.name}</span></div>`).join('');
 
  document.querySelector('#hand')!.innerHTML=Object.entries(me.hand).filter(([,n])=>n>0).map(([k,n])=>`<div class="level-ingredient"><img src="${elementImage(k)}" alt="${k}"><b>×${n}</b></div>`).join('')||'<span>Ингредиенты закончились</span>';
  const r=RECIPES.find(x=>x.name===selectedRecipe)||RECIPES[0];
