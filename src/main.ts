@@ -180,17 +180,16 @@ function showGame(){
    <div class="level-hint-wrap"><div id="hint" class="level-recipe-hint"></div></div>
    <div class="level-inventory-title">Твои ингредиенты</div>
    <div id="hand" class="level-hand"></div>
-   <div class="level-buttons"><button id="make-selected">Создать</button><button id="next">Закончить ход →</button></div>
+   <div class="level-buttons"><button id="make-selected">Создать</button></div>
   </section>
   <div id="level-result" class="level-result" hidden><div class="level-result-card"><h2>Первое зелье готово!</h2><p id="result-text"></p><button id="restart">Новая партия</button><button id="result-back">К уровням</button></div></div>
  </div>`;
  document.querySelector<HTMLButtonElement>('#back')!.onclick=showHome;
- document.querySelector<HTMLButtonElement>('#next')!.onclick=nextTurn;
  document.querySelector<HTMLButtonElement>('#restart')!.onclick=start;
  document.querySelector<HTMLButtonElement>('#result-back')!.onclick=showHome;
  document.querySelector<HTMLButtonElement>('#make-selected')!.onclick=()=>{
   const r=RECIPES.find(x=>x.name===selectedRecipe);
-  if(r&&actions>0&&craft(players[0],r)){actions--;render();}
+  if(r&&actions>0&&craft(players[0],r)){actions--;if(!ended)nextTurn();else render();}
  };
  drawLevelMap();
 }
@@ -205,7 +204,6 @@ function render(){
  document.querySelector('#hint')!.innerHTML=`<b>${r.name}</b><span>${r.inputs.map(k=>(EMOJI[k]||'✦')+' '+k).join(' + ')}</span><small>${claimed[r.name]?'Тайна уже открыта':missing.length?'Не хватает: '+[...new Set(missing)].join(', '):'✓ Можно создать'}</small>`;
  const make=document.querySelector<HTMLButtonElement>('#make-selected')!;
  make.disabled=ended||actions===0||!can(me,r);
- document.querySelector<HTMLButtonElement>('#next')!.disabled=ended;
  const result=document.querySelector<HTMLElement>('#level-result')!;
  result.hidden=!ended;
  if(ended)document.querySelector('#result-text')!.textContent=players.map(p=>p.name+': '+p.flasks+' 🧪').join(' · ');
