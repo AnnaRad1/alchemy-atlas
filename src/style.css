@@ -96,3 +96,17 @@ body:has(.art-screen){overflow:hidden;background:#0e1426}
 .map-footer button,.map-actions button{background:linear-gradient(#6a518b,#342e64);border:2px solid #d1ac6b;color:#ffedc3;text-shadow:0 1px 2px #000;box-shadow:0 3px 8px #0008}
 .map-actions{position:absolute;left:6px;top:15%;z-index:6;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
 .map-actions button{padding:8px 7px;font-size:12px}
+
+
+/* Composed crystal-level assets: all images are separate transparent layers */
+.moving-flask.asset-level{width:clamp(72px,21vw,110px);height:clamp(88px,24vw,132px);border:0;border-radius:0;background:transparent!important;box-shadow:none!important;padding:0;display:block;overflow:visible;filter:none}
+.asset-level img{position:absolute;display:block;object-fit:contain;pointer-events:none;user-select:none}
+.asset-level .level-ring{left:3%;top:3%;width:94%;height:77%;z-index:2}
+.asset-level .level-gem{left:29%;top:17%;width:43%;height:48%;z-index:3}
+.asset-level .level-glow{left:4%;top:4%;width:92%;height:73%;z-index:1;opacity:.4}
+.asset-level.unlocked .level-glow{opacity:.8;animation:crystal-pulse 2s ease-in-out infinite alternate}
+.asset-level .level-plaque{left:26%;top:71%;width:48%;height:26%;z-index:4}
+.asset-level .level-number{position:absolute;z-index:5;left:26%;top:74%;width:48%;height:19%;display:grid;place-items:center;color:#fff1c8;font-size:clamp(16px,4.5vw,23px);font-weight:bold;text-shadow:0 2px 3px #000}
+.asset-level .level-lock{left:70%;top:51%;width:26%;height:28%;z-index:6}
+.asset-level.locked .level-glow{opacity:.24}
+@keyframes crystal-pulse{to{opacity:1;filter:brightness(1.2)}}
