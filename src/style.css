@@ -1138,3 +1138,11 @@ html,body,#app{height:100%!important;max-height:100%!important;overflow:hidden!i
 /* Align the back arrow's visible left edge with the first scaled hero card. */
 .level-head{padding-left:18px!important}
 .level-head button#back{transform:translateY(9px) scale(.88)!important;transform-origin:left center!important}
+
+
+/* Second level uses the same card artwork sizes; only its mist placeholder is new. */
+.alchemy-element-emoji{
+ display:flex;width:100%;height:100%;align-items:center;justify-content:center;
+ font-size:clamp(32px,9vw,58px);
+ filter:drop-shadow(0 0 8px #c8d6ff);
+}
