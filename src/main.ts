@@ -175,9 +175,9 @@ function showGame(){
   <section id="players" class="level-rivals"></section>
   <section class="level-map-wrap"><div id="board" class="level-board"></div></section>
   <section class="level-controls">
+   <div id="hint" class="level-recipe-hint"></div>
    <div class="level-inventory-title">Твои ингредиенты <span id="action-count"></span></div>
    <div id="hand" class="level-hand"></div>
-   <div id="hint" class="level-recipe-hint"></div>
    <div class="level-buttons"><button id="make-selected">Создать</button><button id="next">Закончить ход →</button></div>
   </section>
   <div id="level-result" class="level-result" hidden><div class="level-result-card"><h2>Первое зелье готово!</h2><p id="result-text"></p><button id="restart">Новая партия</button><button id="result-back">К уровням</button></div></div>
