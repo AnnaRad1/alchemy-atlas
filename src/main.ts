@@ -92,6 +92,7 @@ function nextTurn(){
 const app=document.querySelector<HTMLDivElement>('#app')!;
 let game:Phaser.Game|null=null;
 function showHome(){
+ craftingAnimation=false;
  app.innerHTML=`<div class="art-screen"><div class="art-stage">
  <img class="art-image" src="./assets/backgrounds/forest_straight_preview.webp" alt="Волшебная лесная дорога">
  <div class="art-fallback"><h1>⚗️ Алхимический атлас</h1><p>Путь алхимика</p></div>
@@ -170,8 +171,53 @@ function showHome(){
  viewport.addEventListener('wheel',e=>{e.preventDefault();offset=Math.max(0,Math.min(995,offset+e.deltaY/120));update();},{passive:false});
  update();
 }
+let craftingAnimation=false;
+async function animateCraft(recipe:Recipe){
+ const screen=document.querySelector<HTMLElement>('.level-screen');
+ const board=document.querySelector<HTMLElement>('#board');
+ if(!screen||!board)return;
+ const target=Array.from(board.querySelectorAll<HTMLElement>('[data-element]')).find(el=>el.dataset.element===recipe.name);
+ if(!target)return;
+ const targetRect=target.getBoundingClientRect();
+ const tx=targetRect.left+targetRect.width/2,ty=targetRect.top+targetRect.height/2;
+ const layer=document.createElement('div');
+ layer.className='craft-animation-layer';
+ layer.setAttribute('aria-hidden','true');
+ screen.append(layer);
+ const motions:Promise<unknown>[]=[];
+ const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const duration=reduced?100:650;
+ const sources=recipe.inputs.map(name=>Array.from(screen.querySelectorAll<HTMLElement>('.level-ingredient')).find(el=>el.querySelector('img')?.alt===name)).filter((el):el is HTMLElement=>!!el);
+ for(const [i,source] of sources.entries()){
+  const rect=source.getBoundingClientRect();
+  const sx=rect.left+rect.width/2,sy=rect.top+rect.height/2;
+  const spark=document.createElement('span');
+  spark.className='craft-flying-spark';
+  spark.style.left=sx+'px';spark.style.top=sy+'px';
+  layer.append(spark);
+  const animation=spark.animate([
+   {transform:'translate(-50%,-50%) scale(.5)',opacity:0},
+   {transform:'translate(-50%,-50%) scale(1.2)',opacity:1,offset:.18},
+   {transform:`translate(calc(-50% + ${tx-sx}px),calc(-50% + ${ty-sy}px)) scale(.35)`,opacity:0}
+  ],{duration,delay:i*90,easing:'ease-in-out',fill:'forwards'});
+  motions.push(animation.finished.catch(()=>{}));
+  source.classList.add('craft-ingredient-active');
+ }
+ await Promise.all(motions);
+ if(!screen.isConnected){layer.remove();return;}
+ const flash=document.createElement('span');
+ flash.className='craft-target-flash';
+ flash.style.left=tx+'px';flash.style.top=ty+'px';
+ layer.append(flash);
+ target.classList.add('craft-target-active');
+ await new Promise<void>(resolve=>setTimeout(resolve,reduced?80:390));
+ layer.remove();
+ target.classList.remove('craft-target-active');
+ sources.forEach(el=>el.classList.remove('craft-ingredient-active'));
+}
 let selectedRecipe:string='Роса';
 function showGame(){
+ craftingAnimation=false;
  app.innerHTML=`<div class="level-screen">
   <header class="level-head"><button id="back" aria-label="К уровням">←</button><strong>Уровень 1</strong></header>
   <section id="players" class="level-rivals"></section>
@@ -187,9 +233,17 @@ function showGame(){
  document.querySelector<HTMLButtonElement>('#back')!.onclick=showHome;
  document.querySelector<HTMLButtonElement>('#restart')!.onclick=start;
  document.querySelector<HTMLButtonElement>('#result-back')!.onclick=showHome;
- document.querySelector<HTMLButtonElement>('#make-selected')!.onclick=()=>{
+ document.querySelector<HTMLButtonElement>('#make-selected')!.onclick=async()=>{
   const r=RECIPES.find(x=>x.name===selectedRecipe);
-  if(r&&actions>0&&craft(players[0],r)){actions--;if(!ended)nextTurn();else render();}
+  if(craftingAnimation||!r||actions<=0||ended||!can(players[0],r))return;
+  craftingAnimation=true;
+  const button=document.querySelector<HTMLButtonElement>('#make-selected')!;
+  button.disabled=true;
+  try{
+   await animateCraft(r);
+   if(!document.querySelector('.level-screen'))return;
+   if(craft(players[0],r)){actions--;if(!ended)nextTurn();else render();}
+  }finally{craftingAnimation=false;}
  };
  drawLevelMap();
 }
