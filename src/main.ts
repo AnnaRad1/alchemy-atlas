@@ -222,8 +222,9 @@ function drawLevelMap(){
   const recipe=RECIPES.find(r=>r.name===name);
   const ready=!!recipe&&players.length>0&&actions>0&&!ended&&can(players[0],recipe);
   const chosen=selectedRecipe===name;
+  const owned=players.length>0&&count(players[0],name)>0;
   const locked=name==='Лунная капля'&&!claimed[name];
-  return `<button type="button" class="alchemy-map-card ${ready?'ready':''} ${chosen?'chosen':''} ${locked?'secret':''}" data-element="${name}" style="left:${x}%;top:${y}%" aria-label="${name}"><img src="${elementImage(name)}" alt="${name}"></button>`;
+  return `<button type="button" class="alchemy-map-card ${owned?'owned':ready?'ready':''} ${chosen?'chosen':''} ${locked?'secret':''}" data-element="${name}" style="left:${x}%;top:${y}%" aria-label="${name}"><img src="${elementImage(name)}" alt="${name}"></button>`;
  }).join('');
  board.querySelectorAll<HTMLButtonElement>('[data-element]').forEach(button=>{
   button.onclick=()=>{const name=button.dataset.element!;if(RECIPES.some(r=>r.name===name)){selectedRecipe=name;render();}};
