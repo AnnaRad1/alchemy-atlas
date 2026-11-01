@@ -302,7 +302,7 @@ function drawLevelMap(){
  if(!board)return;
  const names=currentLevel===1?['Вода','Солнце','Роса','Лунная капля']:['Вода','Солнце','Огонь','Роса','Пар','Туман'];
  const positions:Record<string,[number,number]>=currentLevel===1?{'Вода':[28,16],'Солнце':[72,16],'Роса':[50,49],'Лунная капля':[50,83]}:{'Вода':[18,14],'Солнце':[50,14],'Огонь':[82,14],'Роса':[30,48],'Пар':[70,48],'Туман':[50,83]};
- const lines='<svg class="alchemy-connections" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs><filter id="alchemy-glow"><feGaussianBlur stdDeviation="1.2"/></filter></defs><path d="M28 16 Q28 31 50 49 M72 16 Q72 31 50 49 M50 49 L50 83" fill="none" stroke="#ffc36c" stroke-width="1.8" filter="url(#alchemy-glow)"/><path d="M28 16 Q28 31 50 49 M72 16 Q72 31 50 49 M50 49 L50 83" fill="none" stroke="#ffe8a5" stroke-width=".65"/></svg>';
+ const lines=currentLevel===2?'<svg class="alchemy-connections" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M18 14 L30 48 M50 14 L30 48 M18 14 L70 48 M82 14 L70 48 M30 48 L50 83 M70 48 L50 83" fill="none" stroke="#ffe8a5" stroke-width=".85"/></svg>':'<svg class="alchemy-connections" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs><filter id="alchemy-glow"><feGaussianBlur stdDeviation="1.2"/></filter></defs><path d="M28 16 Q28 31 50 49 M72 16 Q72 31 50 49 M50 49 L50 83" fill="none" stroke="#ffc36c" stroke-width="1.8" filter="url(#alchemy-glow)"/><path d="M28 16 Q28 31 50 49 M72 16 Q72 31 50 49 M50 49 L50 83" fill="none" stroke="#ffe8a5" stroke-width=".65"/></svg>';
  board.innerHTML=lines+names.map(name=>{
   const [x,y]=positions[name];
   const recipe=RECIPES().find(r=>r.name===name);
@@ -310,7 +310,7 @@ function drawLevelMap(){
   const chosen=selectedRecipe===name;
   const owned=players.length>0&&count(players[0],name)>0;
   const locked=!!recipe?.reward&&!claimed[name];
-  return `<button type="button" class="alchemy-map-card ${owned?'owned':ready?'ready':''} ${chosen?'chosen':''} ${locked?'secret':''}" data-element="${name}" style="left:${x}%;top:${y}%" aria-label="${name}"><img src="${elementImage(name)}" alt="${name}"></button>`;
+  return `<button type="button" class="alchemy-map-card ${owned?'owned':ready?'ready':''} ${chosen?'chosen':''} ${locked?'secret':''}" data-element="${name}" style="left:${x}%;top:${y}%" aria-label="${name}">${elementImage(name)?`<img src="${elementImage(name)}" alt="${name}">`:`<span class="alchemy-element-emoji">🌫️</span>`}</button>`;
  }).join('');
  board.querySelectorAll<HTMLButtonElement>('[data-element]').forEach(button=>{
   button.onclick=()=>{const name=button.dataset.element!;if(RECIPES().some(r=>r.name===name)){selectedRecipe=name;render();}};
