@@ -260,7 +260,21 @@ function showGame(){
   try{
    await animateCraft(r);
    if(!document.querySelector('.level-screen'))return;
-   if(craft(players[0],r)){actions--;if(!ended)await nextTurn();else render();}
+   if(craft(players[0],r)){
+    actions--;render();
+    const card=document.querySelectorAll<HTMLElement>('.level-rival')[0];
+    if(card){
+     card.classList.add('rival-taking-turn');
+     const label=document.createElement('span');
+     label.className='rival-action-label';
+     label.textContent='✦ Создана '+r.name;
+     card.append(label);
+     await new Promise<void>(resolve=>setTimeout(resolve,1050));
+     label.remove();
+     card.classList.remove('rival-taking-turn');
+    }
+    if(!ended&&document.querySelector('.level-screen'))await nextTurn();
+   }
   }finally{craftingAnimation=false;}
  };
  drawLevelMap();
