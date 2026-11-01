@@ -1068,3 +1068,21 @@ html,body,#app{height:100%!important;max-height:100%!important;overflow:hidden!i
  text-align:center!important;
  box-sizing:border-box!important;
 }
+
+
+/* Rival notifications sit below the cards and overlay the alchemy map. */
+.level-rivals{position:relative!important;z-index:40!important;overflow:visible!important}
+.level-rival{position:relative!important;overflow:visible!important}
+.level-rival .rival-action-label{
+ top:calc(100% + 5px)!important;
+ bottom:auto!important;
+ left:50%!important;
+ z-index:45!important;
+ width:max-content!important;
+ max-width:180px!important;
+ min-width:max-content!important;
+ padding:5px 8px!important;
+ white-space:nowrap!important;
+ font:700 clamp(10px,2.7vw,13px)/1.2 Georgia,serif!important;
+ transform:translateX(-50%)!important;
+}
