@@ -96,7 +96,7 @@ const app=document.querySelector<HTMLDivElement>('#app')!;
 let game:Phaser.Game|null=null;
 function showHome(){
  app.innerHTML=`<div class="art-screen"><div class="art-stage">
- <img class="art-image" src="./assets/backgrounds/forest-map.webp" alt="Волшебная лесная дорога">
+ <img class="art-image" src="./assets/backgrounds/forest_straight_preview.webp" alt="Волшебная лесная дорога">
  <div class="art-fallback"><h1>⚗️ Алхимический атлас</h1><p>Путь алхимика</p></div>
  <div class="level-viewport" id="level-viewport" aria-label="Прокрутка уровней"><div id="moving-levels"></div></div>
  <div class="map-topbar"><span>⚗️ Алхимик</span><span>🧪 ${saved.flasks}</span></div>
@@ -117,45 +117,23 @@ function showHome(){
  document.querySelector<HTMLButtonElement>('#rules')!.onclick=()=>openDialog('Создавайте вещества по рецептам и первыми раскрывайте три тайны.');
  document.querySelector<HTMLButtonElement>('#chests')!.onclick=()=>openDialog('Сундуки появятся в следующих обновлениях.');
 
- // The background is stationary. Level nodes move continuously along a fixed
- // normalized curve; changing scroll shifts them one by one, never in batches.
- // One shared continuous path, sampled at equal travel distances.
- // Coordinates are normalized to the map viewport (bottom to top).
- const anchors:[number,number][]=[
-  [0.49,0.94],[0.45,0.78],[0.52,0.65],[0.63,0.52],
-  [0.68,0.39],[0.63,0.27],[0.76,0.15],[0.82,0.03]
- ];
- const catmull=(i:number,t:number)=>{
-  const p0=anchors[Math.max(0,i-1)],p1=anchors[i],p2=anchors[Math.min(anchors.length-1,i+1)],p3=anchors[Math.min(anchors.length-1,i+2)];
-  const coord=(k:number)=>0.5*((2*p1[k])+(-p0[k]+p2[k])*t+(2*p0[k]-5*p1[k]+4*p2[k]-p3[k])*t*t+(-p0[k]+3*p1[k]-3*p2[k]+p3[k])*t*t*t);
-  return {x:coord(0),y:coord(1)};
- };
- const samples:{x:number,y:number,d:number}[]=[];
- let distance=0;
- for(let i=0;i<anchors.length-1;i++)for(let j=0;j<=32;j++){
-  const p=catmull(i,j/32),prev=samples[samples.length-1];
-  if(prev)distance+=Math.hypot(p.x-prev.x,p.y-prev.y);
-  samples.push({...p,d:distance});
- }
+ // Straight road: all levels share one centerline, with perspective.
+ // Coordinates are relative to the viewport, from near to far.
  const point=(t:number)=>{
-  const target=Math.max(0,Math.min(1,t))*distance;
-  let lo=0,hi=samples.length-1;
-  while(lo<hi){const mid=(lo+hi)>>1;if(samples[mid].d<target)lo=mid+1;else hi=mid;}
-  const right=samples[lo],left=samples[Math.max(0,lo-1)];
-  const f=right.d===left.d?0:(target-left.d)/(right.d-left.d);
-  return {x:left.x+(right.x-left.x)*f,y:left.y+(right.y-left.y)*f};
+  const depth=Math.max(0,Math.min(1,t));
+  return {x:0.5,y:0.91-depth*0.82};
  };
  const layer=document.querySelector<HTMLElement>('#moving-levels')!;
  const viewport=document.querySelector<HTMLElement>('#level-viewport')!;
  const range=document.querySelector<HTMLElement>('#level-range')!;
  let offset=0,dragging=false,lastY=0,moved=false,velocity=0,frame=0;
- const visibleCount=4,step=0.225;
+ const visibleCount=4,step=0.245;
  const update=()=>{
   const start=Math.max(1,Math.floor(offset)+1);
-  range.textContent='Уровни '+start+'–'+(start+visibleCount);
+  range.textContent='Уровни '+start+'–'+(start+visibleCount-1);
   layer.replaceChildren();
   for(let n=Math.max(1,Math.floor(offset)-1);n<=Math.ceil(offset)+visibleCount+2;n++){
-   const t=0.08+(n-1-offset)*step;
+   const t=0.035+(n-1-offset)*step;
    if(t<0.02||t>0.98)continue;
    const p=point(t);
    const button=document.createElement('button');
@@ -163,7 +141,7 @@ function showHome(){
    button.className='moving-flask asset-level '+(n===1?'unlocked':'locked');
    button.style.left=(p.x*100)+'%';
    button.style.top=(p.y*100)+'%';
-   button.style.transform='translate(-50%,-50%) scale('+(0.77+0.23*t)+')';
+   button.style.transform='translate(-50%,-50%) scale('+(1.02-0.35*t)+')';
    button.setAttribute('aria-label','Уровень '+n+(n===1?' доступен':' закрыт'));
    button.innerHTML=
      '<img class="level-glow" src="./assets/effects/glow_'+color+'.png" alt="">'+
