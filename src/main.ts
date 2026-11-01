@@ -120,8 +120,8 @@ function showHome(){
  // The background is stationary. Level nodes move continuously along a fixed
  // normalized curve; changing scroll shifts them one by one, never in batches.
  const path:[[number,number],...Array<[number,number]>]=[
-  [0.49,0.83],[0.47,0.72],[0.46,0.62],[0.50,0.53],
-  [0.59,0.45],[0.68,0.36],[0.74,0.27],[0.81,0.19]
+  [0.48,0.91],[0.46,0.79],[0.48,0.67],[0.53,0.55],
+  [0.61,0.43],[0.66,0.31],[0.65,0.19],[0.60,0.07]
  ];
  const point=(t:number)=>{
   const v=Math.max(0,Math.min(path.length-1,t*(path.length-1)));
@@ -134,14 +134,14 @@ function showHome(){
  const viewport=document.querySelector<HTMLElement>('#level-viewport')!;
  const range=document.querySelector<HTMLElement>('#level-range')!;
  let offset=0,dragging=false,lastY=0,moved=false;
- const visibleCount=5,step=0.155;
+ const visibleCount=4,step=0.225;
  const update=()=>{
   const start=Math.max(1,Math.floor(offset)+1);
   range.textContent='Уровни '+start+'–'+(start+visibleCount);
   layer.replaceChildren();
   for(let n=Math.max(1,Math.floor(offset)-1);n<=Math.ceil(offset)+visibleCount+2;n++){
-   const t=(n-1-offset)*step;
-   if(t<0.04||t>0.96)continue;
+   const t=0.08+(n-1-offset)*step;
+   if(t<0.02||t>0.98)continue;
    const p=point(t);
    const button=document.createElement('button');
    button.className='moving-flask '+(n===1?'unlocked':'locked');
@@ -159,7 +159,7 @@ function showHome(){
   if(!dragging)return;
   const dy=e.clientY-lastY;lastY=e.clientY;
   if(Math.abs(dy)>0.5)moved=true;
-  offset=Math.max(0,Math.min(995,offset+dy/Math.max(1,viewport.clientHeight)*5.5));
+  offset=Math.max(0,Math.min(995,offset+dy/Math.max(1,viewport.clientHeight)*4.2));
   update();
  });
  const stop=()=>{dragging=false;};
