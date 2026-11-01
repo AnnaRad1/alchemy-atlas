@@ -1109,3 +1109,27 @@ html,body,#app{height:100%!important;max-height:100%!important;overflow:hidden!i
  right:0!important;
  transform:none!important;
 }
+
+
+/* Slightly reduce all three character cards uniformly, with safe screen margins. */
+.level-rivals{
+ padding-left:16px!important;
+ padding-right:16px!important;
+ gap:8px!important;
+ box-sizing:border-box!important;
+}
+.level-rival{
+ transform:scale(.92)!important;
+ transform-origin:center top!important;
+ overflow:visible!important;
+}
+.level-head button#back{
+ transform:translateY(9px) scale(.88)!important;
+ transform-origin:center!important;
+}
+/* Keep notices directly below the resized cards and inside viewport. */
+.level-rival .rival-action-label{
+ top:calc(100% + 4px)!important;
+ max-width:min(145px,38vw)!important;
+ padding:4px 6px!important;
+}
