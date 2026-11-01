@@ -91,6 +91,17 @@ function nextTurn(){
 }
 const app=document.querySelector<HTMLDivElement>('#app')!;
 let game:Phaser.Game|null=null;
+// Match the visible browser area on mobile (including dynamic address bars).
+function syncViewportHeight(){
+ const viewport=window.visualViewport;
+ const height=viewport?.height||window.innerHeight;
+ document.documentElement.style.setProperty('--visible-height',height+'px');
+}
+syncViewportHeight();
+window.addEventListener('resize',syncViewportHeight);
+window.visualViewport?.addEventListener('resize',syncViewportHeight);
+window.visualViewport?.addEventListener('scroll',syncViewportHeight);
+
 function showHome(){
  app.innerHTML=`<div class="art-screen"><div class="art-stage">
  <img class="art-image" src="./assets/backgrounds/forest_straight_preview.webp" alt="Волшебная лесная дорога">
