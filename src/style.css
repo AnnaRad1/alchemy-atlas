@@ -1086,3 +1086,26 @@ html,body,#app{height:100%!important;max-height:100%!important;overflow:hidden!i
  font:700 clamp(10px,2.7vw,13px)/1.2 Georgia,serif!important;
  transform:translateX(-50%)!important;
 }
+
+
+/* Allow long crafted element names to wrap without leaving the screen. */
+.level-rival .rival-action-label{
+ min-width:0!important;
+ width:max-content!important;
+ max-width:min(170px, 44vw)!important;
+ white-space:normal!important;
+ overflow-wrap:break-word!important;
+ text-align:center!important;
+ box-sizing:border-box!important;
+ line-height:1.25!important;
+}
+.level-rival:first-child .rival-action-label{
+ left:0!important;
+ right:auto!important;
+ transform:none!important;
+}
+.level-rival:last-child .rival-action-label{
+ left:auto!important;
+ right:0!important;
+ transform:none!important;
+}
