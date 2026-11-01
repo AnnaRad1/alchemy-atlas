@@ -97,7 +97,7 @@ async function nextTurn(){
    card.append(label);
   }
   if(recipe)craft(bot,recipe);else draw(bot,1);
-  await new Promise<void>(resolve=>setTimeout(resolve,1800));
+  await new Promise<void>(resolve=>setTimeout(resolve,1050));
   if(!document.querySelector('.level-screen'))return;
   card?.classList.remove('rival-taking-turn');
   card?.querySelector('.rival-action-label')?.remove();
