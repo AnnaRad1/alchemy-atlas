@@ -659,3 +659,46 @@ html,body,#app{height:100%!important;max-height:100%!important;overflow:hidden!i
 .level-rival .rival-face{line-height:1!important}
 .level-rival>span{line-height:1.12!important}
 .level-rival>b{display:flex!important;align-items:center!important;justify-content:center!important;gap:5px!important;line-height:1.1!important;white-space:nowrap!important}
+
+
+/* Center inventory heading and fit potion icon + count inside each player panel. */
+.level-inventory-title{
+ display:flex!important;
+ justify-content:center!important;
+ align-items:center!important;
+ width:100%!important;
+ text-align:center!important;
+ padding:0!important;
+}
+.level-rivals{box-sizing:border-box!important;gap:4px!important}
+.level-rival{
+ box-sizing:border-box!important;
+ min-width:0!important;
+ padding:2px 1px!important;
+ overflow:hidden!important;
+ gap:0!important;
+}
+.level-rival .rival-face{font-size:clamp(17px,4.6vw,24px)!important;line-height:1!important;flex:0 0 auto!important}
+.level-rival>span{
+ display:block!important;
+ max-width:100%!important;
+ overflow:hidden!important;
+ text-overflow:ellipsis!important;
+ white-space:nowrap!important;
+ font-size:clamp(11px,3.2vw,16px)!important;
+ line-height:1.08!important;
+}
+.level-rival>b{
+ display:flex!important;
+ align-items:center!important;
+ justify-content:center!important;
+ width:100%!important;
+ max-width:100%!important;
+ box-sizing:border-box!important;
+ margin:0!important;
+ font-size:clamp(12px,3.5vw,17px)!important;
+ line-height:1!important;
+ overflow:hidden!important;
+}
+.level-head{padding-right:0!important}
+.level-head #turn-count{padding-right:0!important;margin-right:0!important;transform:translateX(3px)}
