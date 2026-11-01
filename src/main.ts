@@ -134,8 +134,8 @@ function showHome(){
   layer.replaceChildren();
   for(let n=Math.max(1,Math.floor(offset)-1);n<=Math.ceil(offset)+visibleCount+2;n++){
    const t=0.035+(n-1-offset)*step;
-   if(t<0.02||t>0.98)continue;
-   const p=point(t);
+   if(t< -0.14||t>1.12)continue;
+   const p={x:0.5,y:0.82-t*0.78};
    const button=document.createElement('button');
    const color=n===1?'gold':(['purple','blue','teal'][(n-2)%3]);
    button.className='moving-flask asset-level '+(n===1?'unlocked':'locked');
