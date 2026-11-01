@@ -135,3 +135,39 @@ body:has(.art-screen){overflow:hidden;background:#0e1426}
  transform:translateY(-50%);
  text-align:center;
 }
+
+
+/* Level 1: mobile-first, no page scroll, central fixed map. */
+html,body,#app{height:100%;margin:0}
+.level-screen{height:100dvh;width:100%;overflow:hidden;display:flex;flex-direction:column;gap:0;background:radial-gradient(ellipse at 50% 35%,#475b91 0%,#202747 57%,#14142b 100%);color:#fff1cf;font-family:Georgia,serif}
+.level-head{height:6%;min-height:38px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:4px 12px;background:#17162fc9;font-size:clamp(12px,3.7vw,18px)}
+.level-head button{background:#55447b;border:1px solid #d9b46b;border-radius:9px;color:#fff4d8;font-size:22px;min-width:40px}
+.level-rivals{height:13%;min-height:75px;flex-shrink:0;display:flex;justify-content:space-around;align-items:stretch;gap:5px;padding:4px 8px}
+.level-rival{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:1px solid #b59c79;border-radius:12px;background:#302c58c7;font-size:clamp(10px,3vw,14px)}
+.level-rival.is-me{border-color:#e7c47b;background:#55427a}
+.rival-face{font-size:clamp(19px,6vw,30px);line-height:1}
+.level-rival b{font-size:clamp(12px,3.6vw,17px);color:#ffdc7c}
+.level-map-wrap{flex:1;min-height:0;position:relative;margin:3px 8px;border:2px solid #9f84ae;border-radius:16px;background:linear-gradient(150deg,#34305b,#252e54 55%,#403257);box-shadow:inset 0 0 28px #0c0d2a}
+.level-map-title{position:absolute;z-index:2;left:0;right:0;top:5px;text-align:center;pointer-events:none;font-size:clamp(12px,3.2vw,16px);text-shadow:0 2px 4px #000}
+.level-board{position:absolute;inset:24px 3px 4px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.level-board canvas{max-width:100%;max-height:100%;object-fit:contain}
+.level-controls{height:30%;min-height:190px;max-height:265px;flex-shrink:0;display:flex;flex-direction:column;gap:5px;padding:7px 9px max(8px,env(safe-area-inset-bottom));background:linear-gradient(#272344,#151b35);border-top:2px solid #b59a67}
+.level-inventory-title{font-size:clamp(13px,3.6vw,17px);font-weight:bold;display:flex;justify-content:space-between}
+.level-inventory-title span{font-size:12px;font-weight:normal}
+.level-hand{display:flex;gap:5px;overflow-x:auto;overflow-y:hidden;min-height:60px;flex:1;align-items:stretch;scrollbar-width:none}
+.level-hand::-webkit-scrollbar{display:none}
+.level-ingredient{flex:1 0 49px;min-width:49px;max-width:78px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid #c6a56c;border-radius:9px;background:#efe0bb;color:#443124;position:relative}
+.level-ingredient>span{font-size:clamp(19px,5.8vw,30px)}
+.level-ingredient small{font-size:clamp(9px,2.7vw,12px)}
+.level-ingredient b{position:absolute;right:3px;top:2px;font-size:11px}
+.level-recipe-hint{display:flex;align-items:center;justify-content:space-between;gap:5px;padding:6px 8px;border:1px solid #806e98;border-radius:9px;background:#42375d;font-size:clamp(11px,3vw,14px);min-height:37px}
+.level-recipe-hint span{font-size:clamp(10px,2.7vw,13px);text-align:center}
+.level-recipe-hint small{font-size:10px;color:#ffe29b;text-align:right}
+.level-buttons{display:flex;gap:8px;min-height:40px}
+.level-buttons button{flex:1;min-width:0;border:2px solid #d7af6c;border-radius:11px;background:linear-gradient(#70568d,#44356a);color:#fff2d3;font:bold clamp(12px,3.6vw,17px) Georgia}
+.level-buttons button:disabled{opacity:.42}
+.level-result[hidden]{display:none}
+.level-result{position:fixed;inset:0;z-index:20;display:grid;place-items:center;background:#090b20cc;padding:18px}
+.level-result-card{width:min(100%,400px);padding:25px;border:3px solid #d4b06e;border-radius:18px;background:#302749;text-align:center}
+.level-result-card button{margin:5px;padding:10px;border:1px solid #d4b06e;border-radius:8px;background:#5b477a;color:white}
+@media(max-height:650px){.level-rivals{height:11%;min-height:62px}.level-controls{height:31%;min-height:160px}.level-hand{min-height:42px}.level-map-title{font-size:12px}}
