@@ -359,3 +359,35 @@ html,body{width:100%;height:100%;margin:0;padding:0;overflow:hidden;background:#
 .level-ingredient img{width:100%!important;height:100%!important;object-fit:contain!important}
 .level-controls{height:33%;max-height:300px}
 @media(max-height:740px){.alchemy-map-card{width:clamp(76px,23vw,120px)}.level-controls{height:35%}}
+
+
+/* Mobile fit pass: keep every control visible without scrolling. */
+.level-screen{box-sizing:border-box;min-height:0}
+.level-head{height:6%;min-height:42px;flex:0 0 auto;padding:4px 9px;box-sizing:border-box}
+.level-head strong{flex:1 1 auto;min-width:0;padding:9px 9px 0!important;line-height:1.15;white-space:nowrap;font-size:clamp(11px,3.2vw,17px)!important}
+.level-head #turn-count{flex:0 0 auto;font-size:clamp(11px,3vw,15px)!important}
+.level-rivals{height:10%;min-height:68px;flex:0 0 auto}
+.level-map-wrap{flex:1 1 auto;min-height:0;overflow:hidden}
+.level-board{overflow:hidden!important}
+.alchemy-map-card{width:min(24vw,118px,calc((100dvh - 490px)*.30));min-width:66px}
+.level-controls{
+ box-sizing:border-box;flex:0 0 auto;height:29%;min-height:0!important;max-height:none!important;
+ padding:3px 9px max(5px,env(safe-area-inset-bottom));gap:3px;
+}
+.level-hint-wrap{flex:0 0 57px;min-height:0!important}
+.level-recipe-hint{padding:5px 14px 5px 52px!important}
+.level-inventory-title{flex:0 0 auto;font-size:clamp(13px,3.5vw,17px)}
+.level-hand{flex:1 1 auto;min-height:0!important;justify-content:space-around;gap:4px}
+.level-ingredient{height:100%!important;max-height:100%!important;aspect-ratio:auto;flex:0 1 26%!important;max-width:94px!important;min-width:0!important}
+.level-ingredient img{object-fit:contain!important}
+.level-ingredient b{right:2px;top:2px;font-size:12px}
+.level-buttons{flex:0 0 47px;min-height:0!important;gap:7px}
+.level-buttons button{min-height:0!important;height:47px}
+@media(max-height:680px){
+ .level-rivals{min-height:57px}
+ .level-controls{height:32%}
+ .level-hint-wrap{flex-basis:47px}
+ .level-buttons{flex-basis:39px}
+ .level-buttons button{height:39px}
+ .alchemy-map-card{width:min(21vw,90px)}
+}
