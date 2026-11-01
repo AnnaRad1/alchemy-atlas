@@ -119,21 +119,36 @@ function showHome(){
 
  // The background is stationary. Level nodes move continuously along a fixed
  // normalized curve; changing scroll shifts them one by one, never in batches.
- const path:[[number,number],...Array<[number,number]>]=[
-  [0.48,0.91],[0.46,0.79],[0.48,0.67],[0.53,0.55],
-  [0.61,0.43],[0.66,0.31],[0.65,0.19],[0.60,0.07]
+ // One shared continuous path, sampled at equal travel distances.
+ // Coordinates are normalized to the map viewport (bottom to top).
+ const anchors:[number,number][]=[
+  [0.49,0.94],[0.45,0.78],[0.52,0.65],[0.63,0.52],
+  [0.68,0.39],[0.63,0.27],[0.76,0.15],[0.82,0.03]
  ];
+ const catmull=(i:number,t:number)=>{
+  const p0=anchors[Math.max(0,i-1)],p1=anchors[i],p2=anchors[Math.min(anchors.length-1,i+1)],p3=anchors[Math.min(anchors.length-1,i+2)];
+  const coord=(k:number)=>0.5*((2*p1[k])+(-p0[k]+p2[k])*t+(2*p0[k]-5*p1[k]+4*p2[k]-p3[k])*t*t+(-p0[k]+3*p1[k]-3*p2[k]+p3[k])*t*t*t);
+  return {x:coord(0),y:coord(1)};
+ };
+ const samples:{x:number,y:number,d:number}[]=[];
+ let distance=0;
+ for(let i=0;i<anchors.length-1;i++)for(let j=0;j<=32;j++){
+  const p=catmull(i,j/32),prev=samples[samples.length-1];
+  if(prev)distance+=Math.hypot(p.x-prev.x,p.y-prev.y);
+  samples.push({...p,d:distance});
+ }
  const point=(t:number)=>{
-  const v=Math.max(0,Math.min(path.length-1,t*(path.length-1)));
-  const i=Math.min(path.length-2,Math.floor(v)),f=v-i;
-  const smooth=f*f*(3-2*f);
-  return {x:path[i][0]+(path[i+1][0]-path[i][0])*smooth,
-          y:path[i][1]+(path[i+1][1]-path[i][1])*smooth};
+  const target=Math.max(0,Math.min(1,t))*distance;
+  let lo=0,hi=samples.length-1;
+  while(lo<hi){const mid=(lo+hi)>>1;if(samples[mid].d<target)lo=mid+1;else hi=mid;}
+  const right=samples[lo],left=samples[Math.max(0,lo-1)];
+  const f=right.d===left.d?0:(target-left.d)/(right.d-left.d);
+  return {x:left.x+(right.x-left.x)*f,y:left.y+(right.y-left.y)*f};
  };
  const layer=document.querySelector<HTMLElement>('#moving-levels')!;
  const viewport=document.querySelector<HTMLElement>('#level-viewport')!;
  const range=document.querySelector<HTMLElement>('#level-range')!;
- let offset=0,dragging=false,lastY=0,moved=false;
+ let offset=0,dragging=false,lastY=0,moved=false,velocity=0,frame=0;
  const visibleCount=4,step=0.225;
  const update=()=>{
   const start=Math.max(1,Math.floor(offset)+1);
@@ -161,15 +176,23 @@ function showHome(){
    layer.appendChild(button);
   }
  };
- viewport.addEventListener('pointerdown',e=>{if(dialog.hidden===false)return;dragging=true;moved=false;lastY=e.clientY;viewport.setPointerCapture(e.pointerId);});
+ viewport.addEventListener('pointerdown',e=>{if(dialog.hidden===false)return;dragging=true;moved=false;velocity=0;cancelAnimationFrame(frame);lastY=e.clientY;viewport.setPointerCapture(e.pointerId);});
  viewport.addEventListener('pointermove',e=>{
   if(!dragging)return;
   const dy=e.clientY-lastY;lastY=e.clientY;
-  if(Math.abs(dy)>0.5)moved=true;
-  offset=Math.max(0,Math.min(995,offset+dy/Math.max(1,viewport.clientHeight)*4.2));
+  if(Math.abs(dy)>2)moved=true;
+  velocity=-dy/Math.max(1,viewport.clientHeight)*4.2;
+  offset=Math.max(0,Math.min(995,offset-dy/Math.max(1,viewport.clientHeight)*4.2));
   update();
  });
- const stop=()=>{dragging=false;};
+ const stop=()=>{
+  if(!dragging)return;
+  dragging=false;
+  cancelAnimationFrame(frame);
+  let speed=Math.max(-0.22,Math.min(0.22,velocity));
+  const glide=()=>{speed*=0.88;if(Math.abs(speed)<0.002)return;offset=Math.max(0,Math.min(995,offset+speed));update();frame=requestAnimationFrame(glide);};
+  frame=requestAnimationFrame(glide);
+ };
  viewport.addEventListener('pointerup',stop);
  viewport.addEventListener('pointercancel',stop);
  viewport.addEventListener('wheel',e=>{e.preventDefault();offset=Math.max(0,Math.min(995,offset+e.deltaY/120));update();},{passive:false});
