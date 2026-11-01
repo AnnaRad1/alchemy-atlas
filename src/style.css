@@ -128,3 +128,10 @@ body:has(.art-screen){overflow:hidden;background:#0e1426}
  left:72%;top:43%;width:39%;height:39%;
  object-fit:contain;filter:drop-shadow(0 2px 3px #000b);
 }
+
+/* Optical centering: plaque in the artwork sits slightly right of badge center. */
+.asset-level .level-number{
+ left:29%;width:50%;
+ transform:translateY(-50%);
+ text-align:center;
+}
