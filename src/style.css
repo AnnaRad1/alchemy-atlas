@@ -875,3 +875,41 @@ html,body,#app{height:100%!important;max-height:100%!important;overflow:hidden!i
  box-shadow:0 1px 3px #25133899!important;
  white-space:nowrap!important;
 }
+
+
+/* Final mobile proportions: do not distort the ingredient art. */
+.level-ingredient{
+ width:clamp(66px,20vw,88px)!important;
+ height:100%!important;
+ max-height:100%!important;
+ aspect-ratio:143/180!important;
+}
+.level-ingredient img{
+ object-fit:contain!important;
+ object-position:center!important;
+}
+/* Compact title and back arrow, keep turn count in its own column. */
+.level-head{
+ grid-template-columns:clamp(34px,9vw,44px) minmax(0,1fr) clamp(58px,14vw,75px)!important;
+ gap:clamp(4px,1.4vw,9px)!important;
+ padding-inline:clamp(8px,2vw,13px)!important;
+}
+.level-head button{
+ width:clamp(34px,9vw,44px)!important;
+ min-width:0!important;
+ height:clamp(31px,4.5dvh,39px)!important;
+ font-size:clamp(17px,4vw,21px)!important;
+ padding:0!important;
+}
+.level-head strong{
+ width:100%!important;
+ height:clamp(37px,5.2dvh,45px)!important;
+ font-size:clamp(14px,3.8vw,18px)!important;
+ padding:3px 5px 0!important;
+ margin:0!important;
+ background-size:100% 100%!important;
+}
+.level-head #turn-count{
+ font-size:clamp(11px,3vw,15px)!important;
+ text-align:center!important;
+}
