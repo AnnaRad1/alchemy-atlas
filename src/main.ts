@@ -84,6 +84,11 @@ function chooseBotRecipe(p:Player):Recipe|undefined{
 }
 function nextTurn(){
  if(ended)return;
+ for(let i=1;i<3;i++){
+  const bot=players[i];
+  const recipe=RECIPES.find(r=>!r.reward&&can(bot,r));
+  if(recipe)craft(bot,recipe);else draw(bot,1);
+ }
  turn++;actions=1;
  draw(players[0],2);
  note('Ход '+turn+': получены новые ингредиенты.');
