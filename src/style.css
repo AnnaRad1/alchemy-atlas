@@ -218,3 +218,6 @@ html,body{width:100%;height:100%;margin:0;padding:0;overflow:hidden;background:#
 .level-rival{background:rgba(29,43,97,.34)}
 .level-rival.is-me{background:rgba(65,61,129,.46)}
 .level-controls{background:linear-gradient(180deg,transparent,rgba(19,27,65,.25))}
+
+/* No map heading: give its space back to the playable map. */
+.level-board{inset:0!important}
