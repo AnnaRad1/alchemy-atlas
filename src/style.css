@@ -1052,3 +1052,19 @@ html,body,#app{height:100%!important;max-height:100%!important;overflow:hidden!i
  border:1px solid #e2b3ff!important;
  box-shadow:0 0 15px #9d45edaa,0 3px 12px #130b30bb!important;
 }
+
+
+/* Keep rival notices inside player cards, away from alchemy map. */
+.level-rival .rival-action-label{
+ top:auto!important;
+ bottom:3px!important;
+ left:50%!important;
+ max-width:calc(100% - 4px)!important;
+ min-width:0!important;
+ width:max-content!important;
+ padding:3px 5px!important;
+ font:700 clamp(10px,2.6vw,12px)/1.15 Georgia,serif!important;
+ white-space:normal!important;
+ text-align:center!important;
+ box-sizing:border-box!important;
+}
