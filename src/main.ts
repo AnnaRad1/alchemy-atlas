@@ -156,15 +156,15 @@ function showHome(){
    const p={x:0.5,y:0.82-t*0.78};
    const button=document.createElement('button');
    const color=n===1?'gold':(['purple','blue','teal'][(n-2)%3]);
-   button.className='moving-flask asset-level '+(n===1?'unlocked':'locked');
+   button.className='moving-flask asset-level '+(n<=2?'unlocked':'locked');
    button.style.left=(p.x*100)+'%';
    button.style.top=(p.y*100)+'%';
    button.style.transform='translate(-50%,-50%) scale('+(0.92-0.32*t)+')';
-   button.setAttribute('aria-label','Уровень '+n+(n===1?' доступен':' закрыт'));
+   button.setAttribute('aria-label','Уровень '+n+(n<=2?' доступен':' закрыт'));
    button.innerHTML=
      '<img class="level-complete" src="./assets/levels/level_'+color+'.png" alt="">'+
      '<span class="level-number">'+n+'</span>'+
-     (n!==1?'<img class="level-lock" src="./assets/levels/lock.png" alt="">':'');
+     (n>2?'<img class="level-lock" src="./assets/levels/lock.png" alt="">':'');
    button.onclick=()=>{if(moved)return;if(n<=2)begin(n);else openDialog('Уровень '+n+' пока закрыт.');};
    layer.appendChild(button);
   }
@@ -239,7 +239,7 @@ let selectedRecipe:string='Роса';
 function showGame(){
  craftingAnimation=false;
  app.innerHTML=`<div class="level-screen">
-  <header class="level-head"><button id="back" aria-label="К уровням">←</button><strong>Уровень 1</strong></header>
+  <header class="level-head"><button id="back" aria-label="К уровням">←</button><strong>Уровень ${currentLevel}</strong></header>
   <section id="players" class="level-rivals"></section>
   <section class="level-map-wrap"><div id="board" class="level-board"></div></section>
   <section class="level-controls">
@@ -251,7 +251,7 @@ function showGame(){
   <div id="level-result" class="level-result" hidden><div class="level-result-card"><h2>Первое зелье готово!</h2><p id="result-text"></p><button id="restart">Новая партия</button><button id="result-back">К уровням</button></div></div>
  </div>`;
  document.querySelector<HTMLButtonElement>('#back')!.onclick=showHome;
- document.querySelector<HTMLButtonElement>('#restart')!.onclick=start;
+ document.querySelector<HTMLButtonElement>('#restart')!.onclick=()=>start(currentLevel);
  document.querySelector<HTMLButtonElement>('#result-back')!.onclick=showHome;
  document.querySelector<HTMLButtonElement>('#make-selected')!.onclick=async()=>{
   const r=RECIPES().find(x=>x.name===selectedRecipe);
