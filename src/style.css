@@ -958,3 +958,20 @@ html,body,#app{height:100%!important;max-height:100%!important;overflow:hidden!i
 /* Separate player cards from heading; align back arrow with title center. */
 .level-rivals{transform:translateY(9px)!important}
 .level-head button#back{transform:translateY(4px)!important}
+
+
+/* Locked-in level layout: keep existing sizes and proportions. */
+.level-head button#back{transform:translateY(9px)!important}
+/* Map states: green = in inventory, violet = craftable now.
+   State wins over selection so tapping does not change its meaning. */
+.alchemy-map-card.owned,
+.alchemy-map-card.owned.chosen{
+ filter:drop-shadow(0 0 5px #43ff8b) drop-shadow(0 0 13px #23db65)!important;
+}
+.alchemy-map-card.ready:not(.owned),
+.alchemy-map-card.ready.chosen:not(.owned){
+ filter:drop-shadow(0 0 6px #df76ff) drop-shadow(0 0 15px #a62aff)!important;
+}
+.alchemy-map-card:not(.owned):not(.ready).chosen{
+ filter:drop-shadow(0 0 5px #ffe19b)!important;
+}
