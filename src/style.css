@@ -59,7 +59,7 @@ body:has(.art-screen){overflow:hidden;background:#0e1426}
 #app:has(.art-screen){max-width:none;padding:0}
 .art-screen{height:100vh;height:100dvh;width:100%;display:flex;justify-content:center;align-items:center;overflow:hidden;background:radial-gradient(#243a56,#0b1021)}
 .art-stage{position:relative;width:min(100vw,75vh);width:min(100vw,75dvh);height:100%;aspect-ratio:1086/1448;overflow:hidden;background:radial-gradient(ellipse at 50% 20%,#38536b,#171b37 55%,#0a0f20);box-shadow:0 0 60px #000a}
-.art-image{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:none}
+.art-image{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:none}
 .art-stage.art-ready .art-image{display:block}
 .art-fallback{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:20px;color:#f5e2b5;text-align:center;background:radial-gradient(#3b3d63,#161d34 70%)}.art-fallback h1{font-size:clamp(22px,5vw,34px)}.art-ready .art-fallback{display:none}
 .art-hotspots{position:absolute;inset:0;z-index:3}.hotspot{position:absolute;display:block;border:0;background:transparent;padding:0;border-radius:14px;cursor:pointer;touch-action:manipulation}
