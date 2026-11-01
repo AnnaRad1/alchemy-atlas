@@ -82,12 +82,24 @@ function chooseBotRecipe(p:Player):Recipe|undefined{
  for(const k of goal.inputs){const r=needed(k);if(r)return r;}
  return RECIPES.find(r=>can(p,r)&&!r.reward);
 }
-function nextTurn(){
+async function nextTurn(){
  if(ended)return;
  for(let i=1;i<3;i++){
   const bot=players[i];
   const recipe=RECIPES.find(r=>!r.reward&&can(bot,r));
+  const card=document.querySelectorAll<HTMLElement>('.level-rival')[i];
+  if(card){
+   card.classList.add('rival-taking-turn');
+   const label=document.createElement('span');
+   label.className='rival-action-label';
+   label.textContent=recipe?'✦ '+recipe.name:'✦ Собирает';
+   card.append(label);
+  }
   if(recipe)craft(bot,recipe);else draw(bot,1);
+  await new Promise<void>(resolve=>setTimeout(resolve,500));
+  if(!document.querySelector('.level-screen'))return;
+  card?.classList.remove('rival-taking-turn');
+  card?.querySelector('.rival-action-label')?.remove();
  }
  turn++;actions=1;
  draw(players[0],2);
@@ -247,7 +259,7 @@ function showGame(){
   try{
    await animateCraft(r);
    if(!document.querySelector('.level-screen'))return;
-   if(craft(players[0],r)){actions--;if(!ended)nextTurn();else render();}
+   if(craft(players[0],r)){actions--;if(!ended)await nextTurn();else render();}
   }finally{craftingAnimation=false;}
  };
  drawLevelMap();
