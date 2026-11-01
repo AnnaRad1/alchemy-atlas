@@ -523,3 +523,13 @@ html,body,#app{height:100%!important;max-height:100%!important;overflow:hidden!i
  .level-buttons{flex-basis:37px!important}
  .level-buttons button{height:37px!important}
 }
+
+
+/* Smaller map illustrations on all mobile screen sizes. */
+.alchemy-map-card{
+ width:clamp(60px,19vw,104px)!important;
+ min-width:0!important;
+}
+@media(max-height:730px){
+ .alchemy-map-card{width:clamp(56px,17vw,88px)!important}
+}
