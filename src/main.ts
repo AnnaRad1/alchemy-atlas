@@ -159,8 +159,8 @@ function showHome(){
   if(!dragging)return;
   const dy=e.clientY-lastY;lastY=e.clientY;
   if(Math.abs(dy)>2)moved=true;
-  velocity=-dy/Math.max(1,viewport.clientHeight)*4.2;
-  offset=Math.max(0,Math.min(995,offset-dy/Math.max(1,viewport.clientHeight)*4.2));
+  velocity=dy/Math.max(1,viewport.clientHeight)*4.2;
+  offset=Math.max(0,Math.min(995,offset+dy/Math.max(1,viewport.clientHeight)*4.2));
   update();
  });
  const stop=()=>{
