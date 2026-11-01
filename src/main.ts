@@ -44,7 +44,7 @@ function craft(p:Player,r:Recipe):boolean {
   if(!p.bot&&!saved.discoveries.includes(r.name)){saved.discoveries.push(r.name);localStorage.setItem(SAVE_KEY,JSON.stringify(saved));}
   note(`${p.name}: ${r.inputs.join(' + ')} → ${r.name}`);
  }
- if(Object.keys(claimed).length===1){ended=true;note('Первое зелье создано! Уровень пройден.');}
+ if(Object.keys(claimed).length===1){ended=true;note(p.bot?'Соперник открыл тайну раньше!':'Тайна открыта! Уровень пройден.');}
  return true;
 }
 function start(level=currentLevel){
@@ -248,7 +248,7 @@ function showGame(){
    <div id="hand" class="level-hand"></div>
    <div class="level-buttons"><button id="make-selected">Создать</button></div>
   </section>
-  <div id="level-result" class="level-result" hidden><div class="level-result-card"><h2>Первое зелье готово!</h2><p id="result-text"></p><button id="restart">Новая партия</button><button id="result-back">К уровням</button></div></div>
+  <div id="level-result" class="level-result" hidden><div class="level-result-card"><h2 id="result-title">Тайна открыта!</h2><p id="result-text"></p><button id="restart">Новая партия</button><button id="result-back">К уровням</button></div></div>
  </div>`;
  document.querySelector<HTMLButtonElement>('#back')!.onclick=showHome;
  document.querySelector<HTMLButtonElement>('#restart')!.onclick=()=>start(currentLevel);
@@ -294,7 +294,7 @@ function render(){
  make.disabled=ended||actions===0||!can(me,r);
  const result=document.querySelector<HTMLElement>('#level-result')!;
  result.hidden=!ended;
- if(ended)document.querySelector('#result-text')!.textContent=players.map(p=>p.name+': '+p.flasks+' 🧪').join(' · ');
+ if(ended){document.querySelector('#result-title')!.textContent=players[0].flasks?'Уровень пройден!':'Соперник оказался быстрее!';document.querySelector('#result-text')!.textContent=players.map(p=>p.name+': '+p.flasks+' 🧪').join(' · ');}
  drawLevelMap();
 }
 function drawLevelMap(){
