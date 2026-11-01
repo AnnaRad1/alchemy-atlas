@@ -12,6 +12,8 @@ const RECIPES:Recipe[]=[
 {name:'Пар',inputs:['Вода','Огонь']},
 {name:'Лунная капля',inputs:['Роса','Вода'],reward:1}
 ];
+const ELEMENT_FILES:Record<string,string>={'Вода':'water','Солнце':'sun','Огонь':'fire','Роса':'dew','Пар':'steam','Лунная капля':'moon_drop'};
+const elementImage=(name:string)=>ELEMENT_FILES[name]?'./assets/elements/'+ELEMENT_FILES[name]+'.png':'';
 const EMOJI:Record<string,string>={'Вода':'💧','Солнце':'☀️','Трава':'🌿','Огонь':'🔥','Воздух':'🌬️','Земля':'🪨','Роса':'💠','Пар':'♨️','Росток':'🌱','Искра':'✨','Туман':'🌫️','Жизнь':'🍃'};
 const SAVE_KEY='alchemy-atlas-v1';
 function load():Save {try {const data=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');return {flasks:Math.max(0,Number(data?.flasks)||0),discoveries:Array.isArray(data?.discoveries)?data.discoveries:[]};}catch{return {flasks:0,discoveries:[]};}}
@@ -198,7 +200,7 @@ function render(){
  document.querySelector('#turn-count')!.textContent='Ход '+turn;
  document.querySelector('#players')!.innerHTML=players.map((p,i)=>`<div class="level-rival ${i===0?'is-me':''}"><div class="rival-face">${i===0?'🧙‍♀️':i===1?'🦊':'🦉'}</div><span>${p.name}</span><b>🧪 ${p.flasks}</b></div>`).join('');
  document.querySelector('#action-count')!.textContent='· действий: '+actions;
- document.querySelector('#hand')!.innerHTML=Object.entries(me.hand).filter(([,n])=>n>0).map(([k,n])=>`<div class="level-ingredient"><span>${EMOJI[k]||'⚗️'}</span><small>${k}</small><b>×${n}</b></div>`).join('')||'<span>Ингредиенты закончились</span>';
+ document.querySelector('#hand')!.innerHTML=Object.entries(me.hand).filter(([,n])=>n>0).map(([k,n])=>`<div class="level-ingredient"><img src="${elementImage(k)}" alt="${k}"><b>×${n}</b></div>`).join('')||'<span>Ингредиенты закончились</span>';
  const r=RECIPES.find(x=>x.name===selectedRecipe)||RECIPES[0];
  const missing=r.inputs.filter(k=>count(me,k)<r.inputs.filter(x=>x===k).length);
  document.querySelector('#hint')!.innerHTML=`<b>${r.name}</b><span>${r.inputs.map(k=>(EMOJI[k]||'✦')+' '+k).join(' + ')}</span><small>${claimed[r.name]?'Тайна уже открыта':missing.length?'Не хватает: '+[...new Set(missing)].join(', '):'✓ Можно создать'}</small>`;
@@ -212,15 +214,15 @@ function render(){
 }
 class AtlasScene extends Phaser.Scene{
  constructor(){super('Atlas');}
+ preload(){for(const [name,file] of Object.entries(ELEMENT_FILES))this.load.image('element-'+name,'./assets/elements/'+file+'.png');}
  create(){mapScene=this;this.drawMap();}
  drawMap(){
   const w=this.scale.width,h=this.scale.height;
   this.children.removeAll();
   const g=this.add.graphics();
   const positions:Record<string,[number,number]>={
-   'Вода':[110,70],'Солнце':[300,70],'Огонь':[490,70],
-   'Роса':[205,205],'Пар':[395,205],
-   'Лунная капля':[300,355]
+   'Вода':[180,65],'Солнце':[420,65],
+   'Роса':[300,202],'Лунная капля':[300,350]
   };
   const scale=Math.min((w-20)/600,(h-20)/405), ox=(w-600*scale)/2,oy=(h-405*scale)/2;
   const pt=(n:string)=>{const p=positions[n];return [ox+p[0]*scale,oy+p[1]*scale] as const;};
@@ -231,13 +233,17 @@ class AtlasScene extends Phaser.Scene{
    const owner=claimed[name];
    const recipe=RECIPES.find(r=>r.name===name);
    const ready=!!recipe&&players.length>0&&actions>0&&!ended&&can(players[0],recipe);
-   const side=Math.max(45,72*scale),radius=Math.max(5,8*scale);
-   if(ready){g.fillStyle(0xf5c950,.5);g.fillRoundedRect(x-side/2-5,y-side/2-5,side+10,side+10,radius+3);}
-   g.fillStyle(owner?0xb5c49b:ready?0xffdf88:secret?0xb38a4c:0xf7e7c5,1);g.lineStyle(ready?3:2,ready?0xd89b22:0x75512c,1);
-   g.fillRoundedRect(x-side/2,y-side/2,side,side,radius);g.strokeRoundedRect(x-side/2,y-side/2,side,side,radius);
-   this.add.text(x,y-2,secret?(owner?'✓':'?'):(EMOJI[name]||'✦'),{fontSize:`${Math.max(22,34*scale)}px`,color:'#4c311d'}).setOrigin(.5);
-   this.add.text(x,y+Math.max(16,24*scale),name,{fontSize:`${Math.max(13,18*scale)}px`,color:'#f9e9ca',backgroundColor:'#33244bc9',padding:{x:3,y:2}}).setOrigin(.5);
-   const hit=this.add.zone(x,y,Math.max(46,76*scale),Math.max(46,66*scale)).setInteractive({useHandCursor:true});
+   const side=Math.max(80,132*scale);
+   if(ready){g.fillStyle(0xffd46c,.22);g.fillRoundedRect(x-side/2-5,y-side/2-5,side+10,side+10,17*scale);}
+   const key='element-'+name;
+   if(this.textures.exists(key)){
+    const img=this.add.image(x,y,key).setDisplaySize(side,side*1.25);
+    if(ready)img.setTint(0xfff4cd);
+    if(secret&&!owner)img.setAlpha(.82);
+   }else{
+    this.add.text(x,y,EMOJI[name]||'✦',{fontSize:'34px'}).setOrigin(.5);
+   }
+   const hit=this.add.zone(x,y,side,side*1.25).setInteractive({useHandCursor:true});
    hit.on('pointerdown',()=>{if(recipe){selectedRecipe=name;render();}});
 
   }
