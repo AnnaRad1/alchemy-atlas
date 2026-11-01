@@ -975,3 +975,19 @@ html,body,#app{height:100%!important;max-height:100%!important;overflow:hidden!i
 .alchemy-map-card:not(.owned):not(.ready).chosen{
  filter:drop-shadow(0 0 5px #ffe19b)!important;
 }
+
+
+/* One action per turn: single centered Create button, no image stretching. */
+.level-buttons{
+ display:flex!important;
+ justify-content:center!important;
+ align-items:center!important;
+ grid-template-columns:none!important;
+}
+.level-buttons #make-selected{
+ flex:0 1 auto!important;
+ width:min(58vw,280px)!important;
+ max-width:280px!important;
+ margin-inline:auto!important;
+ background-size:100% 100%;
+}
