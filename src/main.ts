@@ -15,7 +15,8 @@ const LEVEL_RECIPES:Record<number,Recipe[]>={1:[
 let currentLevel=1;
 const RECIPES=()=>LEVEL_RECIPES[currentLevel];
 const ELEMENT_FILES:Record<string,string>={'Вода':'water','Солнце':'sun','Огонь':'fire','Роса':'dew','Пар':'steam','Лунная капля':'moon_drop'};
-const elementImage=(name:string)=>ELEMENT_FILES[name]?'./assets/elements/'+ELEMENT_FILES[name]+'.png':'';
+const ELEMENT_ASSET_VERSION='20261103-1';
+const elementImage=(name:string)=>ELEMENT_FILES[name]?'./assets/elements/'+ELEMENT_FILES[name]+'.png?v='+ELEMENT_ASSET_VERSION:'';
 const EMOJI:Record<string,string>={'Вода':'💧','Солнце':'☀️','Трава':'🌿','Огонь':'🔥','Воздух':'🌬️','Земля':'🪨','Роса':'💠','Пар':'♨️','Росток':'🌱','Искра':'✨','Туман':'🌫️','Жизнь':'🍃'};
 const SAVE_KEY='alchemy-atlas-v1';
 function load():Save {try {const data=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');return {flasks:Math.max(0,Number(data?.flasks)||0),discoveries:Array.isArray(data?.discoveries)?data.discoveries:[]};}catch{return {flasks:0,discoveries:[]};}}
